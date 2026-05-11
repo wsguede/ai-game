@@ -54,9 +54,14 @@
     .modal { background: #111; border: 1px solid #555; padding: 20px; max-width: 360px; width: 90%; font-family: 'Courier New', monospace; }
     .modal h3 { color: #ffdd00; letter-spacing: 2px; margin-bottom: 12px; font-size: 13px; }
     .modal p { color: #aaa; margin-bottom: 10px; font-size: 12px; line-height: 1.6; }
-    .modal input { background: #1a1a1a; border: 1px solid #555; color: #fff; font-family: inherit; font-size: 13px; padding: 6px 10px; width: 100%; margin-bottom: 12px; }
+    .modal input { background: #1a1a1a; border: 1px solid #555; color: #fff; font-family: inherit; font-size: 13px; padding: 6px 10px; width: 100%; margin-bottom: 6px; }
     .modal input:focus { outline: none; border-color: #ffdd00; }
+    .modal input.error { border-color: #ff4444; }
+    .modal-error { color: #ff4444; font-size: 11px; margin-bottom: 10px; min-height: 16px; }
     .modal .modal-actions { display: flex; gap: 8px; }
+    #notifications { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .notif-item { font-size: 11px; color: #ccc; border-left: 2px solid #ffdd00; padding: 3px 8px; }
+    .notif-item strong { color: #ffdd00; }
     .heat-bar { display: flex; gap: 2px; }
     .heat-pip { width: 12px; height: 12px; background: #222; }
     .heat-pip.active { background: #ff4444; }
@@ -77,6 +82,7 @@
     <div id="gift-section"></div>
     <div id="location-section"></div>
     <div id="market-section"></div>
+    <div id="notifications"></div>
     <div id="event-box" class="event-box"></div>
     <div id="action-bar" class="action-bar"></div>
   </div>
@@ -87,6 +93,7 @@
       <h3 id="modal-title">BUY CANDY</h3>
       <p id="modal-info"></p>
       <input type="number" id="modal-qty" min="1" placeholder="Quantity">
+      <div id="modal-error" class="modal-error"></div>
       <div class="modal-actions">
         <button class="action-btn" id="modal-confirm">CONFIRM</button>
         <button class="action-btn" id="modal-cancel">CANCEL</button>

@@ -1,9 +1,11 @@
 var Game = (function() {
   var _tradeMode = null;   // 'buy' | 'sell'
   var _tradeCandy = null;  // candy id
+  var _travelHints = 0;    // show travel-ends-turn hint for first 2 travels
 
   function startTurn() {
     var s = State.get();
+    s.pendingNotifications = [];
 
     // Market update
     var newPrices = Market.updatePrices(s.currentPrices, s.era.candies, s.activeEffects);
@@ -19,6 +21,18 @@ var Game = (function() {
     s.teacherSickThisTurn = s.teacherSickNextTurn;
     s.teacherSickNextTurn = false;
     s.bulkDealActive = false;
+
+    // Allowance: every 5 days mom gives you $5
+    if (s.turn % 5 === 0) {
+      s.cash = Math.round((s.cash + 5) * 100) / 100;
+      s.pendingNotifications.push('<strong>ALLOWANCE DAY</strong> — Mom slips you $5 for doing your chores.');
+    }
+
+    // Travel hint: first 2 times the player moves locations
+    if (s._travelHint) {
+      s._travelHint = false;
+      s.pendingNotifications.push('<strong>HEADS UP</strong> — Moving to a new location uses your whole day.');
+    }
 
     // Select event
     var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
@@ -78,6 +92,10 @@ var Game = (function() {
     var s = State.get();
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
     s.currentLocation = locationId;
+    if (_travelHints < 2) {
+      _travelHints++;
+      s._travelHint = true;
+    }
     endTurn();
   }
 
@@ -107,6 +125,7 @@ var Game = (function() {
       'In bag: <strong>' + inBag + '</strong><br>' +
       '[B] Max buy: ' + maxBuy + ' &nbsp;|&nbsp; [S] Max sell: ' + maxSell;
 
+    _clearModalError();
     document.getElementById('modal-qty').value = '';
     document.getElementById('modal-qty').placeholder = 'Quantity';
 
@@ -128,11 +147,28 @@ var Game = (function() {
     document.getElementById('modal-qty').focus();
   }
 
+  function _modalError(msg, maxQty) {
+    var input = document.getElementById('modal-qty');
+    var err = document.getElementById('modal-error');
+    err.textContent = msg;
+    input.classList.add('error');
+    input.value = maxQty;
+    input.select();
+  }
+
+  function _clearModalError() {
+    document.getElementById('modal-error').textContent = '';
+    document.getElementById('modal-qty').classList.remove('error');
+  }
+
   function executeBuy(candyId, qty, price, candy) {
     var s = State.get();
+    var maxCash = Math.floor(s.cash / price);
+    var maxStash = State.stashAvailable();
+    var maxBuy = Math.min(maxCash, maxStash);
+    if (qty > maxCash) { _modalError('Not enough cash — max: ' + Math.min(maxCash, maxStash), maxBuy); return; }
+    if (qty > maxStash) { _modalError('Not enough stash space — max: ' + maxBuy, maxBuy); return; }
     var total = price * qty;
-    if (total > s.cash) { alert('Not enough cash.'); return; }
-    if (qty > State.stashAvailable()) { alert('Not enough stash space.'); return; }
     var discounted = total;
     if (s.bulkDealActive && !s.bulkDealUsed && qty <= 10) {
       discounted = price * 0.80 * qty;
@@ -148,7 +184,8 @@ var Game = (function() {
 
   function executeSell(candyId, qty, price, candy) {
     var s = State.get();
-    if ((s.stash[candyId] || 0) < qty) { alert('Not enough ' + candy.name + ' in bag.'); return; }
+    var maxSell = s.stash[candyId] || 0;
+    if (qty > maxSell) { _modalError('Not enough in bag — max: ' + maxSell, maxSell); return; }
     s.cash = Math.round((s.cash + price * qty) * 100) / 100;
     State.removeFromStash(candyId, qty);
     s.heat = Math.min(100, s.heat + Heat.generate(candy, qty));
@@ -157,6 +194,7 @@ var Game = (function() {
   }
 
   function closeModal() {
+    _clearModalError();
     document.getElementById('trade-modal').classList.remove('active');
     _tradeMode = null;
     _tradeCandy = null;

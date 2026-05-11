@@ -84,6 +84,14 @@ var UI = (function() {
       '</table>';
   }
 
+  function renderNotifications(notifications) {
+    var el = document.getElementById('notifications');
+    if (!notifications || notifications.length === 0) { el.innerHTML = ''; return; }
+    el.innerHTML = notifications.map(function(n) {
+      return '<div class="notif-item">' + n + '</div>';
+    }).join('');
+  }
+
   function renderEvent(event) {
     var box = document.getElementById('event-box');
     if (!event) { box.style.display = 'none'; return; }
@@ -104,8 +112,8 @@ var UI = (function() {
   function renderActions(state, pendingEvent) {
     var html = '';
     if (pendingEvent && pendingEvent.type === 'bully') {
-      html =
-        '<button class="action-btn" onclick="Game.payBully()">PAY $5</button>' +
+      if (state.cash >= 5) html += '<button class="action-btn" onclick="Game.payBully()">PAY $5</button>';
+      html +=
         '<button class="action-btn" onclick="Game.runFromBully()">RUN (50/50)</button>' +
         '<button class="action-btn danger" onclick="Game.acceptRob()">ACCEPT ROB</button>';
     } else {
@@ -155,6 +163,7 @@ var UI = (function() {
     renderGiftProgress(state);
     renderLocations(state.era.locations, state.currentLocation);
     renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location);
+    renderNotifications(state.pendingNotifications);
     renderEvent(state.pendingEvent);
     renderActions(state, state.pendingEvent);
   }

@@ -18,6 +18,7 @@ var State = (function() {
       currentPrices: initialPrices,
       previousPrices: initialPrices,
       activeEffects: [],
+      pendingNotifications: [],
       pendingEvent: null,
       bulkDealActive: false,
       bulkDealUsed: false,
