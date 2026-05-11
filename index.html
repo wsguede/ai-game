@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Candy Wars</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d0d0d; color: #c8c8c8; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 20px; min-height: 100vh; }
+    #game { max-width: 620px; margin: 0 auto; }
+    .title-bar { text-align: center; color: #ffdd00; font-size: 15px; letter-spacing: 4px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 12px; }
+    .status-row { display: flex; justify-content: space-between; color: #aaa; border-bottom: 1px solid #222; padding-bottom: 8px; margin-bottom: 12px; }
+    .status-row span { color: #fff; }
+    .section-header { color: #ffdd00; letter-spacing: 2px; font-size: 11px; margin-bottom: 6px; margin-top: 14px; }
+    .green { color: #4cff72; } .yellow { color: #ffdd00; } .red { color: #ff4444; } .cyan { color: #4ecdc4; }
+    .progress-bar { background: #222; height: 8px; margin-top: 4px; }
+    .progress-fill { background: #4cff72; height: 100%; transition: width 0.3s; }
+    .gift-label { color: #aaa; font-size: 11px; margin-top: 4px; display: flex; justify-content: space-between; }
+    .location-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    .location-btn { border: 1px solid #333; padding: 5px 12px; color: #aaa; font-size: 12px; cursor: pointer; background: none; font-family: inherit; position: relative; }
+    .location-btn.current { border-color: #ffdd00; color: #ffdd00; }
+    .location-btn:hover .loc-tooltip { display: block; }
+    .loc-tooltip { display: none; position: absolute; bottom: 130%; left: 0; background: #1a1a1a; border: 1px solid #555; padding: 8px 12px; width: 220px; z-index: 10; color: #ccc; font-size: 11px; line-height: 1.6; pointer-events: none; text-align: left; }
+    .loc-tooltip .tip-title { color: #ffdd00; letter-spacing: 1px; margin-bottom: 4px; }
+    .tip-good { color: #4cff72; } .tip-bad { color: #ff4444; } .tip-neutral { color: #4ecdc4; }
+    .market-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    .market-table th { color: #666; font-size: 10px; text-align: left; padding: 4px 8px; letter-spacing: 1px; border-bottom: 1px solid #222; }
+    .market-table td { padding: 5px 8px; border-bottom: 1px solid #1a1a1a; cursor: pointer; }
+    .market-table tr:hover td { background: #161616; }
+    .market-table .tier-divider td { border-top: 1px solid #2a2a2a; }
+    .candy-cell { position: relative; }
+    .candy-name { border-bottom: 1px dotted #555; color: #eee; }
+    .candy-cell:hover .candy-tooltip { display: block; }
+    .candy-tooltip { display: none; position: absolute; left: 0; bottom: 130%; background: #1a1a1a; border: 1px solid #555; padding: 10px 12px; width: 200px; z-index: 10; font-size: 11px; line-height: 1.8; pointer-events: none; }
+    .candy-tooltip .ct-title { color: #ffdd00; letter-spacing: 1px; margin-bottom: 6px; font-size: 12px; }
+    .ct-row { display: flex; justify-content: space-between; }
+    .ct-label { color: #666; }
+    .risk-low { color: #4cff72; } .risk-med { color: #ffa500; } .risk-high { color: #ff4444; }
+    .vol-low { color: #4ecdc4; } .vol-med { color: #ffa500; } .vol-high { color: #ff88ff; }
+    .trend-up { color: #4cff72; } .trend-upup { color: #4cff72; font-weight: bold; }
+    .trend-down { color: #ff4444; } .trend-downdown { color: #ff4444; font-weight: bold; }
+    .trend-flat { color: #444; }
+    .event-box { border: 1px solid #ff4444; background: #1a0a0a; padding: 10px; margin-top: 14px; color: #ff8888; display: none; }
+    .event-box.intel { border-color: #4ecdc4; background: #0a1a1a; color: #7ed9d4; }
+    .event-box.flavor { border-color: #444; background: #141414; color: #aaa; }
+    .event-box.market { border-color: #ffa500; background: #1a1400; color: #ffcc88; }
+    .event-title { letter-spacing: 2px; font-size: 11px; margin-bottom: 4px; }
+    .action-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; border-top: 1px solid #222; padding-top: 12px; }
+    .action-btn { color: #ffdd00; background: #1a1a00; border: 1px solid #444; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 12px; }
+    .action-btn:hover { background: #2a2a00; border-color: #ffdd00; }
+    .action-btn.danger { color: #ff4444; background: #1a0000; border-color: #662222; }
+    .action-btn.danger:hover { border-color: #ff4444; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: #111; border: 1px solid #555; padding: 20px; max-width: 360px; width: 90%; font-family: 'Courier New', monospace; }
+    .modal h3 { color: #ffdd00; letter-spacing: 2px; margin-bottom: 12px; font-size: 13px; }
+    .modal p { color: #aaa; margin-bottom: 10px; font-size: 12px; line-height: 1.6; }
+    .modal input { background: #1a1a1a; border: 1px solid #555; color: #fff; font-family: inherit; font-size: 13px; padding: 6px 10px; width: 100%; margin-bottom: 12px; }
+    .modal input:focus { outline: none; border-color: #ffdd00; }
+    .modal .modal-actions { display: flex; gap: 8px; }
+    .heat-bar { display: flex; gap: 2px; }
+    .heat-pip { width: 12px; height: 12px; background: #222; }
+    .heat-pip.active { background: #ff4444; }
+    .heat-pip.warn { background: #ffa500; }
+    .screen-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0d0d0d; z-index: 200; align-items: center; justify-content: center; font-family: 'Courier New', monospace; }
+    .screen-overlay.active { display: flex; }
+    .end-screen { max-width: 480px; text-align: center; padding: 40px 20px; }
+    .end-screen h1 { color: #ffdd00; letter-spacing: 4px; font-size: 20px; margin-bottom: 20px; }
+    .end-screen p { color: #aaa; line-height: 1.8; margin-bottom: 12px; }
+    .end-screen .grade { font-size: 48px; color: #4cff72; margin: 20px 0; }
+    .end-screen .grade.fail { color: #ff4444; }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div class="title-bar">★ CANDY WARS ★</div>
+    <div id="status-bar"></div>
+    <div id="gift-section"></div>
+    <div id="location-section"></div>
+    <div id="market-section"></div>
+    <div id="event-box" class="event-box"></div>
+    <div id="action-bar" class="action-bar"></div>
+  </div>
+
+  <!-- Buy/Sell Modal -->
+  <div id="trade-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 id="modal-title">BUY CANDY</h3>
+      <p id="modal-info"></p>
+      <input type="number" id="modal-qty" min="1" placeholder="Quantity">
+      <div class="modal-actions">
+        <button class="action-btn" id="modal-confirm">CONFIRM</button>
+        <button class="action-btn" id="modal-cancel">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win/Loss Screen -->
+  <div id="end-screen" class="screen-overlay">
+    <div class="end-screen" id="end-content"></div>
+  </div>
+
+  <!-- Data -->
+  <script src="data/candies.js"></script>
+  <script src="data/locations.js"></script>
+  <script src="data/events.js"></script>
+  <script src="data/eras.js"></script>
+  <!-- Engine -->
+  <script src="engine/state.js"></script>
+  <script src="engine/market.js"></script>
+  <script src="engine/heat.js"></script>
+  <script src="engine/event-engine.js"></script>
+  <script src="engine/ui.js"></script>
+  <!-- Game loop -->
+  <script src="engine/game.js"></script>
+</body>
+</html>

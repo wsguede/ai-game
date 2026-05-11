@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Candy Wars Tests</title>
+  <style>
+    body { background: #111; color: #ccc; font-family: 'Courier New', monospace; padding: 20px; }
+    h2 { color: #ffdd00; margin-bottom: 16px; }
+    .pass { color: #4cff72; } .fail { color: #ff4444; }
+    .summary { font-size: 14px; margin-bottom: 12px; padding: 8px; border: 1px solid #333; }
+  </style>
+</head>
+<body>
+  <h2>★ CANDY WARS — TESTS ★</h2>
+  <div id="summary" class="summary"></div>
+  <div id="results"></div>
+
+  <script>
+    const _results = [];
+    function test(name, fn) {
+      try { fn(); _results.push({ name, pass: true }); }
+      catch (e) { _results.push({ name, pass: false, error: e.message }); }
+    }
+    function assertEqual(a, b, msg) {
+      if (JSON.stringify(a) !== JSON.stringify(b))
+        throw new Error(msg || 'Expected ' + JSON.stringify(b) + ', got ' + JSON.stringify(a));
+    }
+    function assertBetween(val, min, max, msg) {
+      if (val < min || val > max)
+        throw new Error(msg || 'Expected ' + val + ' between ' + min + ' and ' + max);
+    }
+    function assertTrue(val, msg) {
+      if (!val) throw new Error(msg || 'Expected truthy, got ' + val);
+    }
+    function assertClose(a, b, delta, msg) {
+      if (Math.abs(a - b) > delta)
+        throw new Error(msg || 'Expected ' + a + ' close to ' + b + ' (delta ' + delta + ')');
+    }
+  </script>
+
+  <!-- Data -->
+  <script src="../data/candies.js"></script>
+  <script src="../data/locations.js"></script>
+  <script src="../data/events.js"></script>
+  <script src="../data/eras.js"></script>
+  <!-- Engine (no ui.js — DOM not needed for logic tests) -->
+  <script src="../engine/state.js"></script>
+  <script src="../engine/market.js"></script>
+  <script src="../engine/heat.js"></script>
+  <script src="../engine/event-engine.js"></script>
+  <!-- Tests -->
+  <script src="test-state.js"></script>
+  <script src="test-market.js"></script>
+  <script src="test-heat.js"></script>
+  <script src="test-events.js"></script>
+
+  <script>
+    const pass = _results.filter(r => r.pass).length;
+    const fail = _results.filter(r => !r.pass).length;
+    document.getElementById('summary').innerHTML =
+      '<span class="' + (fail ? 'fail' : 'pass') + '">' + pass + ' passed, ' + fail + ' failed</span>';
+    document.getElementById('results').innerHTML = _results.map(r =>
+      '<div class="' + (r.pass ? 'pass' : 'fail') + '">' +
+      (r.pass ? '✓' : '✗') + ' ' + r.name + (r.error ? ': ' + r.error : '') +
+      '</div>'
+    ).join('');
+  </script>
+</body>
+</html>
