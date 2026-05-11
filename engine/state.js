@@ -22,6 +22,7 @@ var State = (function() {
       bulkDealActive: false,
       bulkDealUsed: false,
       teacherSickThisTurn: false,
+      teacherSickNextTurn: false,
       era: era,
     };
     return _state;

@@ -63,9 +63,9 @@ var EVENTS = [
     id: 'tip_teacher_sick',
     type: 'intel',
     cssClass: 'intel',
-    text: 'INTEL: Mrs. Henderson called in sick. Patrol risk is lower everywhere today.',
+    text: 'INTEL: Mrs. Henderson called in sick. Patrol risk is lower everywhere tomorrow.',
     condition: function(state) { return state.turn < 28; },
-    effect: function(state) { state.teacherSickThisTurn = true; },
+    effect: function(state) { state.teacherSickNextTurn = true; },
   },
   {
     id: 'tip_black_market',

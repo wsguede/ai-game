@@ -15,8 +15,9 @@ var Game = (function() {
       .map(function(e) { return Object.assign({}, e, { turnsLeft: e.turnsLeft - 1 }); })
       .filter(function(e) { return e.turnsLeft > 0; });
 
-    // Reset per-turn flags
-    s.teacherSickThisTurn = false;
+    // Reset per-turn flags (promote next-turn flags before rolling events)
+    s.teacherSickThisTurn = s.teacherSickNextTurn;
+    s.teacherSickNextTurn = false;
     s.bulkDealActive = false;
 
     // Select event
