@@ -73,3 +73,58 @@ test('ERA_V1 win goals are in ascending cash order', function() {
     assertTrue(ERA_V1.winGoals[i].cash > ERA_V1.winGoals[i-1].cash);
   }
 });
+
+test('State.init sets correct starting values', function() {
+  var s = State.init(ERA_V1);
+  assertEqual(s.cash, 10.00);
+  assertEqual(s.turn, 1);
+  assertEqual(s.heat, 0);
+  assertEqual(s.principalVisits, 0);
+  assertEqual(s.gamePhase, 'playing');
+  assertEqual(s.stashCapacity, 30);
+});
+
+test('State.init sets current prices from base prices', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  assertEqual(s.currentPrices['smarties'], 0.25);
+  assertEqual(s.currentPrices['rarepoprocks'], 18.50);
+});
+
+test('State.stashTotal returns 0 on fresh state', function() {
+  State.init(ERA_V1);
+  assertEqual(State.stashTotal(), 0);
+});
+
+test('State.addToStash and removeFromStash work correctly', function() {
+  State.init(ERA_V1);
+  State.addToStash('smarties', 5);
+  assertEqual(State.stashTotal(), 5);
+  assertEqual(State.stashAvailable(), 25);
+  State.removeFromStash('smarties', 3);
+  assertEqual(State.stashTotal(), 2);
+});
+
+test('State.addToStash throws when over capacity', function() {
+  State.init(ERA_V1);
+  var threw = false;
+  try { State.addToStash('smarties', 31); }
+  catch(e) { threw = true; }
+  assertTrue(threw, 'should throw when exceeding stash capacity');
+});
+
+test('State.removeFromStash throws when insufficient quantity', function() {
+  State.init(ERA_V1);
+  var threw = false;
+  try { State.removeFromStash('smarties', 1); }
+  catch(e) { threw = true; }
+  assertTrue(threw, 'should throw when removing candy not in stash');
+});
+
+test('State.clearStash empties all candy', function() {
+  State.init(ERA_V1);
+  State.addToStash('smarties', 5);
+  State.addToStash('snickers', 3);
+  State.clearStash();
+  assertEqual(State.stashTotal(), 0);
+});
