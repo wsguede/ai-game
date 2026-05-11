@@ -30,3 +30,47 @@ test('bulk_deal effect sets bulkDealActive on state', function() {
   event.effect(fakeState);
   assertEqual(fakeState.bulkDealActive, true);
 });
+
+test('EventEngine.selectEvent returns null when no events fire (mocked random=1)', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  s.heat = 0;
+  var cafeteria = LOCATIONS.find(function(l) { return l.id === 'cafeteria'; });
+  // Override Math.random to always return 1 (no events fire)
+  var origRandom = Math.random;
+  Math.random = function() { return 1; };
+  var event = EventEngine.selectEvent(s, cafeteria, ERA_V1);
+  Math.random = origRandom;
+  assertEqual(event, null);
+});
+
+test('EventEngine.selectEvent returns teacher when random is below teacher chance', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  s.heat = 100;
+  var cafeteria = LOCATIONS.find(function(l) { return l.id === 'cafeteria'; });
+  var origRandom = Math.random;
+  Math.random = function() { return 0.0; }; // always fires
+  var event = EventEngine.selectEvent(s, cafeteria, ERA_V1);
+  Math.random = origRandom;
+  assertEqual(event.type, 'teacher');
+});
+
+test('EventEngine.resolveTeacher: low stash → no principal visit', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  // 5 smarties at $0.25, riskWeight 1 → $1.25 risk value (well under $20)
+  s.stash = { smarties: 5 };
+  var outcome = EventEngine.resolveTeacher(s);
+  assertEqual(outcome.principalVisit, false);
+});
+
+test('EventEngine.resolveTeacher: high stash → principal visit', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  // 3 Ferrero Rocher at $10, riskWeight 4 → $120 risk value (over $60)
+  s.stash = { ferrerorocher: 3 };
+  var outcome = EventEngine.resolveTeacher(s);
+  assertEqual(outcome.principalVisit, true);
+  assertEqual(outcome.heatSpike, true);
+});
