@@ -57,3 +57,19 @@ test('bathroom has all-candy modifier 0.90', function() {
   var bathroom = LOCATIONS.find(function(l) { return l.id === 'bathroom'; });
   assertEqual(bathroom.modifiers.all, 0.90);
 });
+
+test('ERA_V1 references correct data arrays', function() {
+  assertEqual(ERA_V1.candies, CANDIES);
+  assertEqual(ERA_V1.locations, LOCATIONS);
+  assertEqual(ERA_V1.events, EVENTS);
+});
+
+test('ERA_V1 has 3 win goal tiers', function() {
+  assertEqual(ERA_V1.winGoals.length, 3);
+});
+
+test('ERA_V1 win goals are in ascending cash order', function() {
+  for (var i = 1; i < ERA_V1.winGoals.length; i++) {
+    assertTrue(ERA_V1.winGoals[i].cash > ERA_V1.winGoals[i-1].cash);
+  }
+});
