@@ -132,11 +132,11 @@ var Game = (function() {
     var total = price * qty;
     if (total > s.cash) { alert('Not enough cash.'); return; }
     if (qty > State.stashAvailable()) { alert('Not enough stash space.'); return; }
-    var discounted = s.bulkDealActive && !s.bulkDealUsed ? total * 0.80 : total;
+    var discounted = total;
     if (s.bulkDealActive && !s.bulkDealUsed && qty <= 10) {
+      discounted = price * 0.80 * qty;
       s.bulkDealUsed = true;
       s.bulkDealActive = false;
-      discounted = price * 0.80 * qty;
     }
     s.cash = Math.round((s.cash - discounted) * 100) / 100;
     State.addToStash(candyId, qty);
