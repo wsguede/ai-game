@@ -39,6 +39,9 @@
     .trend-up { color: #4cff72; } .trend-upup { color: #4cff72; font-weight: bold; }
     .trend-down { color: #ff4444; } .trend-downdown { color: #ff4444; font-weight: bold; }
     .trend-flat { color: #444; }
+    .trend-wrap { position: relative; display: inline-block; cursor: default; }
+    .trend-wrap:hover .trend-tip { display: block; }
+    .trend-tip { display: none; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid #555; padding: 3px 8px; white-space: nowrap; z-index: 10; font-size: 11px; color: #ccc; pointer-events: none; }
     .event-box { border: 1px solid #ff4444; background: #1a0a0a; padding: 10px; margin-top: 14px; color: #ff8888; display: none; }
     .event-box.intel { border-color: #4ecdc4; background: #0a1a1a; color: #7ed9d4; }
     .event-box.flavor { border-color: #444; background: #141414; color: #aaa; }

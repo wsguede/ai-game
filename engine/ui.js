@@ -59,6 +59,8 @@ var UI = (function() {
       var locPrice  = Market.getLocationPrice(basePrice, candy, location, activeEffects);
       var prevPrice = Market.getLocationPrice(previousPrices[candy.id] || basePrice, candy, location);
       var trend     = Market.getPriceTrend(prevPrice, locPrice);
+      var pct       = prevPrice > 0 ? Math.round((locPrice - prevPrice) / prevPrice * 100) : 0;
+      var pctLabel  = (pct > 0 ? '+' : '') + pct + '% vs yesterday';
       var inBag     = stash[candy.id] || 0;
       var tierClass = prevTier !== null && prevTier !== candy.risk ? ' class="tier-divider"' : '';
       prevTier = candy.risk;
@@ -72,7 +74,7 @@ var UI = (function() {
             '<div class="ct-row"><span class="ct-label">Heat/unit</span><span>+' + candy.heatPerUnit + '</span></div>' +
           '</div>' +
         '</td>' +
-        '<td class="price-cell">$' + locPrice.toFixed(2) + ' <span class="trend-' + trend + '">' + TREND_SYMBOLS[trend] + '</span></td>' +
+        '<td class="price-cell">$' + locPrice.toFixed(2) + ' <span class="trend-wrap"><span class="trend-' + trend + '">' + TREND_SYMBOLS[trend] + '</span><div class="trend-tip">' + pctLabel + '</div></span></td>' +
         '<td>' + inBag + '</td>' +
       '</tr>';
     }).join('');
