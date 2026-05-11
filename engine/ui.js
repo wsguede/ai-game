@@ -135,20 +135,12 @@ var UI = (function() {
   }
 
   function renderWin(state) {
-    var grade = 'C';
-    var message = state.era.winGoals[0].message;
-    for (var i = state.era.winGoals.length - 1; i >= 0; i--) {
-      if (state.cash >= state.era.winGoals[i].cash) {
-        grade = state.era.winGoals[i].grade;
-        message = state.era.winGoals[i].message;
-        break;
-      }
-    }
     document.getElementById('end-content').innerHTML =
       '<h1>SCHOOL\'S OUT</h1>' +
-      '<div class="grade">' + grade + '</div>' +
-      '<p>' + message + '</p>' +
-      '<p style="color:#666;font-size:11px;">Final cash: $' + state.cash.toFixed(2) + ' · Day ' + state.turn + '</p>' +
+      '<div class="grade">★</div>' +
+      '<p>Summer starts now. You hustled for 180 days and walked away with:</p>' +
+      '<p class="green" style="font-size:22px;margin:16px 0;letter-spacing:2px">$' + state.cash.toFixed(2) + '</p>' +
+      '<p style="color:#666;font-size:11px;">180 days · ' + state.principalVisits + '/3 principal visits</p>' +
       '<button class="action-btn" style="margin-top:20px" onclick="location.reload()">PLAY AGAIN</button>';
     document.getElementById('end-screen').classList.add('active');
   }
@@ -156,7 +148,7 @@ var UI = (function() {
   function renderLoss(state) {
     var reason = state.principalVisits >= 3
       ? 'Three strikes. Mrs. Henderson sends you to the principal one last time. Detention — indefinite.'
-      : 'Time\'s up. Day 30 is over.';
+      : 'Time\'s up. Day ' + state.maxTurns + ' is over.';
     document.getElementById('end-content').innerHTML =
       '<h1>GAME OVER</h1>' +
       '<div class="grade fail">F</div>' +

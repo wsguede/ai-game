@@ -88,11 +88,7 @@ var Game = (function() {
 
     // Check win/loss
     if (s.principalVisits >= 3) { UI.renderLoss(s); return; }
-    if (s.turn >= s.maxTurns) {
-      if (s.cash >= s.era.winGoals[0].cash) UI.renderWin(s);
-      else UI.renderLoss(s);
-      return;
-    }
+    if (s.turn >= s.maxTurns) { UI.renderWin(s); return; }
 
     s.turn++;
     startTurn();
