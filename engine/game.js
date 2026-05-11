@@ -250,10 +250,15 @@ var Game = (function() {
 
   function init() {
     State.init(ERA_V1);
+    document.getElementById('intro-modal').classList.add('active');
+  }
+
+  function closeIntro() {
+    document.getElementById('intro-modal').classList.remove('active');
     startTurn();
   }
 
-  return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, setTradeMode: setTradeMode, fillMax: fillMax, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob };
+  return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, setTradeMode: setTradeMode, fillMax: fillMax, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob, closeIntro: closeIntro };
 })();
 
 

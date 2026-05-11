@@ -83,6 +83,13 @@
     .end-screen p { color: #aaa; line-height: 1.8; margin-bottom: 12px; }
     .end-screen .grade { font-size: 48px; color: #4cff72; margin: 20px 0; }
     .end-screen .grade.fail { color: #ff4444; }
+    .intro-section { margin-bottom: 12px; }
+    .intro-label { color: #ffdd00; letter-spacing: 1px; font-size: 10px; margin-bottom: 4px; }
+    .intro-divider { border: none; border-top: 1px solid #2a2a2a; margin: 12px 0; }
+    .intro-event-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 6px; font-size: 12px; color: #bbb; }
+    .intro-tag { font-size: 10px; letter-spacing: 1px; padding: 1px 6px; border: 1px solid; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .intro-tag-teacher { color: #ff4444; border-color: #662222; }
+    .intro-tag-bully { color: #ff8800; border-color: #663300; }
   </style>
 </head>
 <body>
@@ -121,6 +128,34 @@
   <!-- Win/Loss Screen -->
   <div id="end-screen" class="screen-overlay">
     <div class="end-screen" id="end-content"></div>
+  </div>
+
+  <!-- Intro Dialog -->
+  <div id="intro-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 style="text-align:center;letter-spacing:3px;margin-bottom:16px">★ CANDY WARS ★</h3>
+      <div class="intro-section">
+        <div class="intro-label">THE SITUATION</div>
+        <p>Summer vacation is in <strong>180 days</strong>. You want to show up with cash in your pocket. The other kids have allowances — you've got hustle. Everyone loves candy, and you know where to get it cheap.</p>
+      </div>
+      <div class="intro-section">
+        <div class="intro-label">HOW IT WORKS</div>
+        <p>Buy low, sell high. Move between locations to find the best prices. When the last bell rings, your score is whatever you've saved. Make it count.</p>
+      </div>
+      <hr class="intro-divider">
+      <div class="intro-section">
+        <div class="intro-label">WATCH OUT FOR</div>
+        <div class="intro-event-row">
+          <span class="intro-tag intro-tag-teacher">TEACHER</span>
+          <span>Mrs. Henderson will confiscate your whole stash. Three visits to the principal and it's game over.</span>
+        </div>
+        <div class="intro-event-row">
+          <span class="intro-tag intro-tag-bully">BULLY</span>
+          <span>Tommy wants a cut. Pay him $5, make a run for it, or let him take everything — your call.</span>
+        </div>
+      </div>
+      <button class="action-btn" style="width:100%;margin-top:16px;letter-spacing:2px" onclick="Game.closeIntro()">LET'S GET TO WORK →</button>
+    </div>
   </div>
 
   <!-- Data -->
