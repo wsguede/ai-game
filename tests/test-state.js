@@ -31,3 +31,29 @@ test('high risk candies have riskWeight 4', function() {
     assertEqual(c.riskWeight, 4, c.name + ' should have riskWeight 4');
   });
 });
+
+test('LOCATIONS has exactly 5 entries', function() {
+  assertEqual(LOCATIONS.length, 5);
+});
+
+test('each location has required fields', function() {
+  var validRisk = ['none','low','med','high'];
+  LOCATIONS.forEach(function(loc) {
+    assertTrue(loc.id, 'missing id');
+    assertTrue(loc.name, 'missing name');
+    assertTrue(validRisk.indexOf(loc.patrolRisk) !== -1, 'invalid patrolRisk: ' + loc.patrolRisk);
+    assertTrue(validRisk.indexOf(loc.bullyRisk) !== -1, 'invalid bullyRisk: ' + loc.bullyRisk);
+    assertTrue(typeof loc.heatDecayBonus === 'number', 'heatDecayBonus must be a number');
+    assertTrue(Array.isArray(loc.tooltip), 'tooltip must be array');
+  });
+});
+
+test('library has heatDecayBonus 10', function() {
+  var library = LOCATIONS.find(function(l) { return l.id === 'library'; });
+  assertEqual(library.heatDecayBonus, 10);
+});
+
+test('bathroom has all-candy modifier 0.90', function() {
+  var bathroom = LOCATIONS.find(function(l) { return l.id === 'bathroom'; });
+  assertEqual(bathroom.modifiers.all, 0.90);
+});

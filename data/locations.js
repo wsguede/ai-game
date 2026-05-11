@@ -1,0 +1,67 @@
+var LOCATIONS = [
+  {
+    id: 'cafeteria',
+    name: 'CAFETERIA',
+    patrolRisk: 'high',
+    bullyRisk: 'low',
+    modifiers: { byRisk: {}, byId: {}, all: null },
+    heatDecayBonus: 0,
+    tooltip: [
+      { cls: 'tip-good', text: '+ All candy available' },
+      { cls: 'tip-good', text: '+ High foot traffic' },
+      { cls: 'tip-bad',  text: '- High teacher patrol risk' },
+    ],
+  },
+  {
+    id: 'playground',
+    name: 'PLAYGROUND',
+    patrolRisk: 'low',
+    bullyRisk: 'high',
+    modifiers: { byRisk: { low: 1.15 }, byId: {}, all: null },
+    heatDecayBonus: 0,
+    tooltip: [
+      { cls: 'tip-good', text: '+ Cheap candy sells fast' },
+      { cls: 'tip-good', text: '+ Low teacher presence' },
+      { cls: 'tip-bad',  text: '- Bully hotspot' },
+      { cls: 'tip-bad',  text: '- No premium on fancy candy' },
+    ],
+  },
+  {
+    id: 'gymnasium',
+    name: 'GYMNASIUM',
+    patrolRisk: 'med',
+    bullyRisk: 'low',
+    modifiers: { byRisk: { med: 1.15 }, byId: { kitkat: 0.85 }, all: null },
+    heatDecayBonus: 0,
+    tooltip: [
+      { cls: 'tip-good', text: '+ Mid-tier candy +15%' },
+      { cls: 'tip-bad',  text: '- Kit Kats underperform' },
+    ],
+  },
+  {
+    id: 'library',
+    name: 'LIBRARY',
+    patrolRisk: 'low',
+    bullyRisk: 'none',
+    modifiers: { byRisk: { high: 1.20 }, byId: {}, all: null },
+    heatDecayBonus: 10,
+    tooltip: [
+      { cls: 'tip-good',    text: '+ High-end candy premium' },
+      { cls: 'tip-neutral', text: '~ Heat decays 2x faster' },
+      { cls: 'tip-bad',     text: '- Low volume, no cheap demand' },
+    ],
+  },
+  {
+    id: 'bathroom',
+    name: 'BATHROOM',
+    patrolRisk: 'none',
+    bullyRisk: 'med',
+    modifiers: { byRisk: {}, byId: {}, all: 0.90 },
+    heatDecayBonus: 0,
+    tooltip: [
+      { cls: 'tip-good', text: '+ Lowest patrol risk' },
+      { cls: 'tip-bad',  text: '- All prices -10%' },
+      { cls: 'tip-bad',  text: '- Bully ambush possible' },
+    ],
+  },
+];
