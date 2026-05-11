@@ -9,6 +9,12 @@ var Game = (function() {
     var s = State.get();
     s.pendingNotifications = [];
 
+    // Apply calendar event effect BEFORE price update — player sees prices and event on same day
+    var calEventObj = s.era.calendarEvents ? s.era.calendarEvents[s.turn] : null;
+    if (calEventObj) {
+      EventEngine.executeEffect(calEventObj, s);
+    }
+
     // Market update
     var newPrices = Market.updatePrices(s.currentPrices, s.era.candies, s.activeEffects);
     s.previousPrices = JSON.parse(JSON.stringify(s.currentPrices));
@@ -19,7 +25,7 @@ var Game = (function() {
       .map(function(e) { return Object.assign({}, e, { turnsLeft: e.turnsLeft - 1 }); })
       .filter(function(e) { return e.turnsLeft > 0; });
 
-    // Reset per-turn flags (promote next-turn flags before rolling events)
+    // Reset per-turn flags
     s.teacherSickThisTurn = s.teacherSickNextTurn;
     s.teacherSickNextTurn = false;
     s.bulkDealActive = false;
@@ -36,33 +42,35 @@ var Game = (function() {
       s.pendingNotifications.push('<strong>HEADS UP</strong> — Moving to a new location uses your whole day.');
     }
 
-    // Select event
-    var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
-    var event = EventEngine.selectEvent(s, location, s.era);
-    s.pendingEvent = event;
+    // Calendar events take priority over random selection
+    if (calEventObj) {
+      s.pendingEvent = calEventObj;
+    } else {
+      var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
+      var event = EventEngine.selectEvent(s, location, s.era);
+      s.pendingEvent = event;
 
-    // Execute non-interactive event effects immediately
-    if (event && event.type !== 'teacher' && event.type !== 'bully') {
-      EventEngine.executeEffect(event, s);
-    }
-
-    // Resolve teacher immediately (no player choice)
-    if (event && event.type === 'teacher') {
-      var outcome = EventEngine.resolveTeacher(s);
-      var teacherMsg = 'A teacher spots you. ';
-      if (!outcome.principalVisit) {
-        teacherMsg += 'She confiscates everything but lets you off with a warning.';
-      } else if (!outcome.heatSpike) {
-        teacherMsg += 'She confiscates everything and sends you to the principal. (' + s.principalVisits + '/3)';
-      } else {
-        teacherMsg += 'She confiscates everything, sends you to the principal, and calls your parents. (' + s.principalVisits + '/3)';
+      if (event && event.type !== 'teacher' && event.type !== 'bully') {
+        EventEngine.executeEffect(event, s);
       }
-      s.pendingEvent = Object.assign({}, event, { text: teacherMsg });
 
-      if (s.principalVisits >= 3) {
-        UI.render(s);
-        setTimeout(function() { UI.renderLoss(s); }, 800);
-        return;
+      if (event && event.type === 'teacher') {
+        var outcome = EventEngine.resolveTeacher(s);
+        var teacherMsg = 'A teacher spots you. ';
+        if (!outcome.principalVisit) {
+          teacherMsg += 'She confiscates everything but lets you off with a warning.';
+        } else if (!outcome.heatSpike) {
+          teacherMsg += 'She confiscates everything and sends you to the principal. (' + s.principalVisits + '/3)';
+        } else {
+          teacherMsg += 'She confiscates everything, sends you to the principal, and calls your parents. (' + s.principalVisits + '/3)';
+        }
+        s.pendingEvent = Object.assign({}, event, { text: teacherMsg });
+
+        if (s.principalVisits >= 3) {
+          UI.render(s);
+          setTimeout(function() { UI.renderLoss(s); }, 800);
+          return;
+        }
       }
     }
 
