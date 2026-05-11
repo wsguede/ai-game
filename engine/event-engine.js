@@ -5,23 +5,24 @@ var EventEngine = (function() {
   function selectEvent(state, location, era) {
     var s = state;
 
-    // Teacher patrol check
-    var tChance = Heat.teacherChance(s.heat, location, s.teacherSickThisTurn);
-    if (Math.random() < tChance) {
-      return { type: 'teacher', cssClass: 'threat', id: 'teacher' };
+    // Day 1: no threats or negative events — give the player a safe first turn
+    if (s.turn !== 1) {
+      var tChance = Heat.teacherChance(s.heat, location, s.teacherSickThisTurn);
+      if (Math.random() < tChance) {
+        return { type: 'teacher', cssClass: 'threat', id: 'teacher' };
+      }
+
+      var bChance = Heat.bullyChance(location);
+      if (Math.random() < bChance) {
+        return { type: 'bully', cssClass: 'threat', id: 'bully',
+          text: 'Tommy steps out from behind the lockers. He wants what\'s in your bag.',
+        };
+      }
     }
 
-    // Bully encounter check
-    var bChance = Heat.bullyChance(location);
-    if (Math.random() < bChance) {
-      return { type: 'bully', cssClass: 'threat', id: 'bully',
-        text: 'Tommy steps out from behind the lockers. He wants what\'s in your bag.',
-      };
-    }
-
-    // Pool event check
     if (Math.random() > 0.40) return null;
     var eligible = era.events.filter(function(e) {
+      if (s.turn === 1 && e.allowOnDay1 === false) return false;
       return e.type !== 'threat' && e.condition(s);
     });
     if (eligible.length === 0) return null;
