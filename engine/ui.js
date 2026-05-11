@@ -16,11 +16,11 @@ var UI = (function() {
     }
     document.getElementById('status-bar').innerHTML =
       '<div class="status-row">' +
-        '<div>DAY <span>' + state.turn + '</span>/' + state.maxTurns + '</div>' +
-        '<div>CASH: <span class="green">$' + state.cash.toFixed(2) + '</span></div>' +
-        '<div>STASH: <span>' + State.stashTotal() + '</span>/' + state.stashCapacity + '</div>' +
-        '<div>HEAT: <div class="heat-bar">' + heatPips + '</div></div>' +
-        '<div>PRINCIPAL: ' + principalDots + '</div>' +
+        '<div>📅 DAY <span>' + state.turn + '</span>/' + state.maxTurns + '</div>' +
+        '<div>💰 <span class="green">$' + state.cash.toFixed(2) + '</span></div>' +
+        '<div>🎒 <span>' + State.stashTotal() + '</span>/' + state.stashCapacity + '</div>' +
+        '<div>🔥 <div class="heat-bar">' + heatPips + '</div></div>' +
+        '<div>🚨 ' + principalDots + '</div>' +
       '</div>';
   }
 
