@@ -61,6 +61,10 @@
     .modal input:focus { outline: none; border-color: #ffdd00; }
     .modal input.error { border-color: #ff4444; }
     .modal-error { color: #ff4444; font-size: 11px; margin-bottom: 10px; min-height: 16px; }
+    .modal-mode { display: flex; gap: 8px; margin-bottom: 10px; }
+    .modal-qty-row { display: flex; gap: 8px; }
+    .modal-qty-row input { flex: 1; margin-bottom: 0; }
+    .modal-btn-active { background: #2a2a00 !important; border-color: #ffdd00 !important; }
     .modal .modal-actions { display: flex; gap: 8px; }
     #notifications { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
     .notif-item { font-size: 11px; color: #ccc; border-left: 2px solid #ffdd00; padding: 3px 8px; }
@@ -95,7 +99,14 @@
     <div class="modal">
       <h3 id="modal-title">BUY CANDY</h3>
       <p id="modal-info"></p>
-      <input type="number" id="modal-qty" min="1" placeholder="Quantity">
+      <div class="modal-mode">
+        <button class="action-btn" id="modal-buy-btn" onclick="Game.setTradeMode('buy')">[B] BUY</button>
+        <button class="action-btn" id="modal-sell-btn" onclick="Game.setTradeMode('sell')">[S] SELL</button>
+      </div>
+      <div class="modal-qty-row">
+        <input type="number" id="modal-qty" min="1" placeholder="Quantity">
+        <button class="action-btn" id="modal-max-btn" onclick="Game.fillMax()">[M] MAX</button>
+      </div>
       <div id="modal-error" class="modal-error"></div>
       <div class="modal-actions">
         <button class="action-btn" id="modal-confirm">CONFIRM</button>

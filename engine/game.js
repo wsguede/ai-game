@@ -1,6 +1,8 @@
 var Game = (function() {
-  var _tradeMode = null;   // 'buy' | 'sell'
+  var _tradeMode  = null;  // 'buy' | 'sell'
   var _tradeCandy = null;  // candy id
+  var _maxBuy     = 0;
+  var _maxSell    = 0;
   var _travelHints = 0;    // show travel-ends-turn hint for first 2 travels
 
   function startTurn() {
@@ -106,6 +108,24 @@ var Game = (function() {
     endTurn();
   }
 
+  function setTradeMode(mode) {
+    _tradeMode = mode;
+    var s = State.get();
+    var candy = s.era.candies.find(function(c) { return c.id === _tradeCandy; });
+    document.getElementById('modal-title').textContent = (mode === 'buy' ? 'BUY ' : 'SELL ') + candy.name.toUpperCase();
+    document.getElementById('modal-buy-btn').classList.toggle('modal-btn-active', mode === 'buy');
+    document.getElementById('modal-sell-btn').classList.toggle('modal-btn-active', mode === 'sell');
+    _clearModalError();
+  }
+
+  function fillMax() {
+    var qty = _tradeMode === 'buy' ? _maxBuy : _maxSell;
+    var input = document.getElementById('modal-qty');
+    input.value = qty;
+    _clearModalError();
+    input.focus();
+  }
+
   function openTrade(candyId) {
     var s = State.get();
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
@@ -115,19 +135,16 @@ var Game = (function() {
     var inBag = s.stash[candyId] || 0;
 
     _tradeCandy = candyId;
-    var maxBuy = Math.min(State.stashAvailable(), Math.floor(s.cash / price));
-    var maxSell = inBag;
+    _maxBuy  = Math.min(State.stashAvailable(), Math.floor(s.cash / price));
+    _maxSell = inBag;
 
-    document.getElementById('modal-title').textContent = candy.name.toUpperCase();
     document.getElementById('modal-info').innerHTML =
       'Price: <strong>$' + price.toFixed(2) + '</strong> &nbsp;|&nbsp; ' +
       'Cash: <strong>$' + s.cash.toFixed(2) + '</strong> &nbsp;|&nbsp; ' +
-      'In bag: <strong>' + inBag + '</strong><br>' +
-      '[B] Max buy: ' + maxBuy + ' &nbsp;|&nbsp; [S] Max sell: ' + maxSell;
+      'In bag: <strong>' + inBag + '</strong>';
 
     _clearModalError();
     document.getElementById('modal-qty').value = '';
-    document.getElementById('modal-qty').placeholder = 'Quantity';
 
     document.getElementById('modal-confirm').onclick = function() {
       var qty = parseInt(document.getElementById('modal-qty').value, 10);
@@ -135,14 +152,9 @@ var Game = (function() {
       if (_tradeMode === 'buy') executeBuy(candyId, qty, price, candy);
       else executeSell(candyId, qty, price, candy);
     };
-
     document.getElementById('modal-cancel').onclick = closeModal;
 
-    // Default to buy if has space, sell if has inventory
-    _tradeMode = inBag > 0 ? 'sell' : 'buy';
-    document.getElementById('modal-title').textContent =
-      (_tradeMode === 'buy' ? 'BUY ' : 'SELL ') + candy.name.toUpperCase();
-
+    setTradeMode(inBag > 0 ? 'sell' : 'buy');
     document.getElementById('trade-modal').classList.add('active');
     document.getElementById('modal-qty').focus();
   }
@@ -231,13 +243,19 @@ var Game = (function() {
     startTurn();
   }
 
-  return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob };
+  return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, setTradeMode: setTradeMode, fillMax: fillMax, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob };
 })();
 
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
   if (document.getElementById('trade-modal').classList.contains('active')) {
-    if (e.key === 'Escape') Game.openTrade && document.getElementById('modal-cancel').click();
+    var typing = document.activeElement === document.getElementById('modal-qty');
+    if (e.key === 'Escape') document.getElementById('modal-cancel').click();
+    if (!typing) {
+      if (e.key === 'b' || e.key === 'B') Game.setTradeMode('buy');
+      if (e.key === 's' || e.key === 'S') Game.setTradeMode('sell');
+      if (e.key === 'm' || e.key === 'M') Game.fillMax();
+    }
     return;
   }
   if (e.key === 'Enter') Game.endTurn();
