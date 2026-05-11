@@ -1,4 +1,6 @@
 // ERA_V1: elementary school. Points engine at v1 data sets.
+// Balance verified: $10 start lets player buy 30 Smarties or 4 Snickers on turn 1.
+// At 15%/turn compound margin, C($100)~turn17, B($150)~turn20, A($250)~turn23 — all achievable in 30.
 var ERA_V1 = {
   id: 'elementary',
   name: 'ELEMENTARY SCHOOL',
