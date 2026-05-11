@@ -24,15 +24,34 @@ var UI = (function() {
       '</div>';
   }
 
-  function renderGiftProgress(state) {
-    var topGoal = state.era.winGoals[state.era.winGoals.length - 1].cash;
-    var pct = Math.min(100, (state.cash / topGoal) * 100);
-    var nextGoal = state.era.winGoals.find(function(g) { return state.cash < g.cash; });
-    var goalLabel = nextGoal ? '$' + nextGoal.cash + ' 🎁' : '★ ACHIEVED ★';
+  function renderCalendarBar(state) {
+    var pct = Math.min(100, (state.turn / state.maxTurns) * 100);
+    var daysLeft = state.maxTurns - state.turn;
+    var emojiMap = {
+      halloween_spike: '🎃', halloween_crash: '💀',
+      valentines_surge: '💝', spring_break: '🌸',
+    };
+    var ticks = '';
+    if (state.era.calendarEvents) {
+      Object.keys(state.era.calendarEvents).forEach(function(day) {
+        var evt = state.era.calendarEvents[day];
+        var tickPct = (parseInt(day, 10) / state.maxTurns * 100).toFixed(1);
+        var emoji = emojiMap[evt.id] || '●';
+        ticks += '<div class="cal-tick" style="left:' + tickPct + '%">' +
+          '<div class="cal-tick-label">' + emoji + '</div>' +
+          '</div>';
+      });
+    }
     document.getElementById('gift-section').innerHTML =
-      '<div class="section-header">MOM\'S GIFT FUND</div>' +
-      '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-      '<div class="gift-label"><span>$' + state.cash.toFixed(2) + ' saved</span><span>Goal: ' + goalLabel + '</span></div>';
+      '<div class="section-header">SCHOOL YEAR</div>' +
+      '<div class="cal-bar-wrap">' +
+        '<div class="progress-bar"><div class="progress-fill" style="width:' + pct.toFixed(1) + '%"></div></div>' +
+        ticks +
+      '</div>' +
+      '<div class="gift-label">' +
+        '<span>DAY ' + state.turn + ' / ' + state.maxTurns + '</span>' +
+        '<span>SUMMER IN ' + daysLeft + ' DAYS</span>' +
+      '</div>';
   }
 
   function renderLocations(locations, currentLocationId) {
@@ -162,7 +181,7 @@ var UI = (function() {
   function render(state) {
     var location = state.era.locations.find(function(l) { return l.id === state.currentLocation; });
     renderStatusBar(state);
-    renderGiftProgress(state);
+    renderCalendarBar(state);
     renderLocations(state.era.locations, state.currentLocation);
     renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity);
     renderNotifications(state.pendingNotifications);
