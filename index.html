@@ -26,6 +26,8 @@
     .market-table th { color: #666; font-size: 10px; text-align: left; padding: 4px 8px; letter-spacing: 1px; border-bottom: 1px solid #222; }
     .market-table td { padding: 5px 8px; border-bottom: 1px solid #1a1a1a; cursor: pointer; }
     .market-table tr:hover td { background: #161616; }
+    .market-table tr.row-disabled td { opacity: 0.35; cursor: default; }
+    .market-table tr.row-disabled:hover td { background: transparent; }
     .market-table .tier-divider td { border-top: 1px solid #2a2a2a; }
     .candy-cell { position: relative; }
     .candy-name { border-bottom: 1px dotted #555; color: #eee; }
@@ -65,6 +67,7 @@
     .modal-qty-row { display: flex; gap: 8px; }
     .modal-qty-row input { flex: 1; margin-bottom: 0; }
     .modal-btn-active { background: #2a2a00 !important; border-color: #ffdd00 !important; }
+    .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .modal .modal-actions { display: flex; gap: 8px; }
     #notifications { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
     .notif-item { font-size: 11px; color: #ccc; border-left: 2px solid #ffdd00; padding: 3px 8px; }

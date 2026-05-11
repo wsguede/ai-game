@@ -52,7 +52,9 @@ var UI = (function() {
     document.getElementById('location-section').innerHTML = html;
   }
 
-  function renderMarket(candies, currentPrices, previousPrices, stash, location, activeEffects) {
+  function renderMarket(candies, currentPrices, previousPrices, stash, location, activeEffects, cash, stashCapacity) {
+    var stashUsed  = Object.values(stash).reduce(function(s, q) { return s + q; }, 0);
+    var stashAvail = stashCapacity - stashUsed;
     var prevTier = null;
     var rows = candies.map(function(candy) {
       var basePrice = currentPrices[candy.id];
@@ -62,9 +64,15 @@ var UI = (function() {
       var pct       = prevPrice > 0 ? Math.round((locPrice - prevPrice) / prevPrice * 100) : 0;
       var pctLabel  = (pct > 0 ? '+' : '') + pct + '% vs yesterday';
       var inBag     = stash[candy.id] || 0;
-      var tierClass = prevTier !== null && prevTier !== candy.risk ? ' class="tier-divider"' : '';
+      var canBuy    = stashAvail > 0 && cash >= locPrice;
+      var canTrade  = canBuy || inBag > 0;
+      var classes   = [];
+      if (prevTier !== null && prevTier !== candy.risk) classes.push('tier-divider');
+      if (!canTrade) classes.push('row-disabled');
       prevTier = candy.risk;
-      return '<tr' + tierClass + ' onclick="Game.openTrade(\'' + candy.id + '\')">' +
+      var classAttr  = classes.length ? ' class="' + classes.join(' ') + '"' : '';
+      var onClickAttr = canTrade ? ' onclick="Game.openTrade(\'' + candy.id + '\')"' : '';
+      return '<tr' + classAttr + onClickAttr + '>' +
         '<td class="candy-cell">' +
           '<span class="candy-name">' + candy.name + '</span>' +
           '<div class="candy-tooltip">' +
@@ -164,7 +172,7 @@ var UI = (function() {
     renderStatusBar(state);
     renderGiftProgress(state);
     renderLocations(state.era.locations, state.currentLocation);
-    renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location, state.activeEffects);
+    renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity);
     renderNotifications(state.pendingNotifications);
     renderEvent(state.pendingEvent);
     renderActions(state, state.pendingEvent);

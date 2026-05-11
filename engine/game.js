@@ -109,12 +109,18 @@ var Game = (function() {
   }
 
   function setTradeMode(mode) {
+    if (mode === 'buy'  && _maxBuy  === 0) mode = 'sell';
+    if (mode === 'sell' && _maxSell === 0) mode = 'buy';
     _tradeMode = mode;
     var s = State.get();
     var candy = s.era.candies.find(function(c) { return c.id === _tradeCandy; });
     document.getElementById('modal-title').textContent = (mode === 'buy' ? 'BUY ' : 'SELL ') + candy.name.toUpperCase();
-    document.getElementById('modal-buy-btn').classList.toggle('modal-btn-active', mode === 'buy');
-    document.getElementById('modal-sell-btn').classList.toggle('modal-btn-active', mode === 'sell');
+    var buyBtn  = document.getElementById('modal-buy-btn');
+    var sellBtn = document.getElementById('modal-sell-btn');
+    buyBtn.classList.toggle('modal-btn-active', mode === 'buy');
+    sellBtn.classList.toggle('modal-btn-active', mode === 'sell');
+    buyBtn.disabled  = _maxBuy  === 0;
+    sellBtn.disabled = _maxSell === 0;
     _clearModalError();
   }
 
