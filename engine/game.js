@@ -246,21 +246,6 @@ var Game = (function() {
   return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, setTradeMode: setTradeMode, fillMax: fillMax, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob };
 })();
 
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-  if (document.getElementById('trade-modal').classList.contains('active')) {
-    var typing = document.activeElement === document.getElementById('modal-qty');
-    if (e.key === 'Escape') document.getElementById('modal-cancel').click();
-    if (!typing) {
-      if (e.key === 'b' || e.key === 'B') Game.setTradeMode('buy');
-      if (e.key === 's' || e.key === 'S') Game.setTradeMode('sell');
-      if (e.key === 'm' || e.key === 'M') Game.fillMax();
-    }
-    return;
-  }
-  if (e.key === 'Enter') Game.endTurn();
-  if (e.key === 'l' || e.key === 'L') Game.layLow();
-});
 
 // Start the game
 window.onload = function() { Game.init(); };
