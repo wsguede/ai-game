@@ -48,16 +48,20 @@ var EVENTS = [
     type: 'intel',
     cssClass: 'intel',
     text: 'INTEL: Word is the playground is running low on penny candy. Prices there will be way up tomorrow.',
-    condition: function(state) { return state.turn < 25; },
-    effect: function() {},
+    condition: function(state) { return state.turn < 25 && !state.activeEffects.some(function(e) { return e.id === 'tip_playground_spike'; }); },
+    effect: function(state) {
+      state.activeEffects.push({ id: 'tip_playground_spike', type: 'byLocation', location: 'playground', risk: 'low', modifier: 1.50, turnsLeft: 1 });
+    },
   },
   {
     id: 'tip_library_spike',
     type: 'intel',
     cssClass: 'intel',
     text: 'INTEL: Rich kids in the library are desperate for something fancy. High-end candy will go for a premium tomorrow.',
-    condition: function(state) { return state.turn < 25; },
-    effect: function() {},
+    condition: function(state) { return state.turn < 25 && !state.activeEffects.some(function(e) { return e.id === 'tip_library_spike'; }); },
+    effect: function(state) {
+      state.activeEffects.push({ id: 'tip_library_spike', type: 'byLocation', location: 'library', risk: 'high', modifier: 1.40, turnsLeft: 1 });
+    },
   },
   {
     id: 'tip_teacher_sick',
@@ -72,8 +76,10 @@ var EVENTS = [
     type: 'intel',
     cssClass: 'intel',
     text: 'INTEL: Someone whispers: "Check the bathroom tomorrow. Rare stuff coming in."',
-    condition: function(state) { return state.turn < 27; },
-    effect: function() {},
+    condition: function(state) { return state.turn < 27 && !state.activeEffects.some(function(e) { return e.id === 'tip_black_market'; }); },
+    effect: function(state) {
+      state.activeEffects.push({ id: 'tip_black_market', type: 'byLocation', location: 'bathroom', risk: 'high', modifier: 0.70, turnsLeft: 1 });
+    },
   },
   // --- FLAVOR EVENTS ---
   {

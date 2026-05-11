@@ -31,12 +31,23 @@ var Market = (function() {
   }
 
   // Returns the location-adjusted price for one candy at one location
-  function getLocationPrice(basePrice, candy, location) {
+  function getLocationPrice(basePrice, candy, location, activeEffects) {
     var mod = location.modifiers;
-    if (mod.byId && mod.byId[candy.id] != null) return Math.round(basePrice * mod.byId[candy.id] * 100) / 100;
-    if (mod.byRisk && mod.byRisk[candy.risk] != null) return Math.round(basePrice * mod.byRisk[candy.risk] * 100) / 100;
-    if (mod.all != null) return Math.round(basePrice * mod.all * 100) / 100;
-    return basePrice;
+    var price = basePrice;
+    if (mod.byId && mod.byId[candy.id] != null) price = price * mod.byId[candy.id];
+    else if (mod.byRisk && mod.byRisk[candy.risk] != null) price = price * mod.byRisk[candy.risk];
+    else if (mod.all != null) price = price * mod.all;
+
+    // Apply location-specific active effects (e.g. intel tips)
+    if (activeEffects) {
+      activeEffects.forEach(function(effect) {
+        if (effect.type === 'byLocation' && effect.location === location.id) {
+          if (!effect.risk || effect.risk === candy.risk) price *= effect.modifier;
+        }
+      });
+    }
+
+    return Math.round(price * 100) / 100;
   }
 
   // Returns trend symbol class name based on price change

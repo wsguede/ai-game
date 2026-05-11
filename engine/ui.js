@@ -52,11 +52,11 @@ var UI = (function() {
     document.getElementById('location-section').innerHTML = html;
   }
 
-  function renderMarket(candies, currentPrices, previousPrices, stash, location) {
+  function renderMarket(candies, currentPrices, previousPrices, stash, location, activeEffects) {
     var prevTier = null;
     var rows = candies.map(function(candy) {
       var basePrice = currentPrices[candy.id];
-      var locPrice  = Market.getLocationPrice(basePrice, candy, location);
+      var locPrice  = Market.getLocationPrice(basePrice, candy, location, activeEffects);
       var prevPrice = Market.getLocationPrice(previousPrices[candy.id] || basePrice, candy, location);
       var trend     = Market.getPriceTrend(prevPrice, locPrice);
       var inBag     = stash[candy.id] || 0;
@@ -162,7 +162,7 @@ var UI = (function() {
     renderStatusBar(state);
     renderGiftProgress(state);
     renderLocations(state.era.locations, state.currentLocation);
-    renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location);
+    renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location, state.activeEffects);
     renderNotifications(state.pendingNotifications);
     renderEvent(state.pendingEvent);
     renderActions(state, state.pendingEvent);

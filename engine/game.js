@@ -111,7 +111,7 @@ var Game = (function() {
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
     var candy = s.era.candies.find(function(c) { return c.id === candyId; });
     var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
-    var price = Market.getLocationPrice(s.currentPrices[candyId], candy, location);
+    var price = Market.getLocationPrice(s.currentPrices[candyId], candy, location, s.activeEffects);
     var inBag = s.stash[candyId] || 0;
 
     _tradeCandy = candyId;
