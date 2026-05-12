@@ -15,9 +15,16 @@ var Game = (function() {
       EventEngine.executeEffect(calEventObj, s);
     }
 
+    // Capture what the player last saw (location-adjusted) before prices update
+    var currentLoc = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
+    var seenPrices = {};
+    s.era.candies.forEach(function(c) {
+      seenPrices[c.id] = Market.getLocationPrice(s.currentPrices[c.id], c, currentLoc, s.activeEffects);
+    });
+    s.previousSeenPrices = seenPrices;
+
     // Market update
     var newPrices = Market.updatePrices(s.currentPrices, s.era.candies, s.activeEffects);
-    s.previousPrices = JSON.parse(JSON.stringify(s.currentPrices));
     s.currentPrices = newPrices;
 
     // Decay active effects

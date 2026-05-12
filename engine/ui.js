@@ -71,17 +71,17 @@ var UI = (function() {
     document.getElementById('location-section').innerHTML = html;
   }
 
-  function renderMarket(candies, currentPrices, previousPrices, stash, location, activeEffects, cash, stashCapacity) {
+  function renderMarket(candies, currentPrices, previousSeenPrices, stash, location, activeEffects, cash, stashCapacity) {
     var stashUsed  = Object.values(stash).reduce(function(s, q) { return s + q; }, 0);
     var stashAvail = stashCapacity - stashUsed;
     var prevTier = null;
     var rows = candies.map(function(candy) {
       var basePrice = currentPrices[candy.id];
       var locPrice  = Market.getLocationPrice(basePrice, candy, location, activeEffects);
-      var prevPrice = Market.getLocationPrice(previousPrices[candy.id] || basePrice, candy, location);
+      var prevPrice = previousSeenPrices[candy.id] || basePrice;
       var trend     = Market.getPriceTrend(prevPrice, locPrice);
       var pct       = prevPrice > 0 ? Math.round((locPrice - prevPrice) / prevPrice * 100) : 0;
-      var pctLabel  = (pct > 0 ? '+' : '') + pct + '% vs yesterday';
+      var pctLabel  = (pct > 0 ? '+' : '') + pct + '% vs last seen';
       var inBag     = stash[candy.id] || 0;
       var canBuy    = stashAvail > 0 && cash >= locPrice;
       var canTrade  = canBuy || inBag > 0;
@@ -183,7 +183,7 @@ var UI = (function() {
     renderStatusBar(state);
     renderCalendarBar(state);
     renderLocations(state.era.locations, state.currentLocation);
-    renderMarket(state.era.candies, state.currentPrices, state.previousPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity);
+    renderMarket(state.era.candies, state.currentPrices, state.previousSeenPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity);
     renderNotifications(state.pendingNotifications);
     renderEvent(state.pendingEvent);
     renderActions(state, state.pendingEvent);
