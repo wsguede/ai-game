@@ -145,10 +145,10 @@ var UI = (function() {
       html +=
         '<button class="action-btn" onclick="Game.runFromBully()">RUN (50/50)</button>' +
         '<button class="action-btn danger" onclick="Game.acceptRob()">ACCEPT ROB</button>';
+    } else if (state.tradedThisTurn) {
+      html = '<button class="action-btn" onclick="Game.endTurn()">END TURN →</button>';
     } else {
-      html =
-        '<button class="action-btn" onclick="Game.layLow()">LAY LOW (−20 heat)</button>' +
-        '<button class="action-btn" onclick="Game.endTurn()">END TURN →</button>';
+      html = '<button class="action-btn" onclick="Game.layLow()">LAY LOW (−20 heat)</button>';
     }
     document.getElementById('action-bar').innerHTML = html;
   }

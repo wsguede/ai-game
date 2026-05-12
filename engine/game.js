@@ -36,6 +36,7 @@ var Game = (function() {
     s.teacherSickThisTurn = s.teacherSickNextTurn;
     s.teacherSickNextTurn = false;
     s.bulkDealActive = false;
+    s.tradedThisTurn = false;
 
     // Allowance: every 5 days mom gives you $5
     if (s.turn % 5 === 0) {
@@ -206,6 +207,7 @@ var Game = (function() {
     }
     s.cash = Math.round((s.cash - discounted) * 100) / 100;
     State.addToStash(candyId, qty);
+    s.tradedThisTurn = true;
     s.heat = Math.min(100, s.heat + Heat.generate(candy, qty));
     closeModal();
     UI.render(s);
@@ -217,6 +219,7 @@ var Game = (function() {
     if (qty > maxSell) { _modalError('Not enough in bag — max: ' + maxSell, maxSell); return; }
     s.cash = Math.round((s.cash + price * qty) * 100) / 100;
     State.removeFromStash(candyId, qty);
+    s.tradedThisTurn = true;
     s.heat = Math.min(100, s.heat + Heat.generate(candy, qty));
     closeModal();
     UI.render(s);
