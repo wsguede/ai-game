@@ -37,6 +37,8 @@ var Game = (function() {
     s.teacherSickNextTurn = false;
     s.bulkDealActive = false;
     s.tradedThisTurn = false;
+    s.laidLowThisTurn = s.laidLowNextTurn;
+    s.laidLowNextTurn = false;
 
     // Allowance: every 5 days mom gives you $5
     if (s.turn % 5 === 0) {
@@ -117,6 +119,7 @@ var Game = (function() {
     var s = State.get();
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
     s.heat = Math.max(0, s.heat - 20);
+    s.laidLowNextTurn = true;
     endTurn();
   }
 

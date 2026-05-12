@@ -74,3 +74,31 @@ test('EventEngine.resolveTeacher: high stash → principal visit', function() {
   assertEqual(outcome.principalVisit, true);
   assertEqual(outcome.heatSpike, true);
 });
+
+test('EventEngine.selectEvent skips teacher when stash is empty', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  s.turn = 2;
+  s.heat = 100;
+  var cafeteria = ERA_V1.locations.find(function(l) { return l.id === 'cafeteria'; });
+  var origRandom = Math.random;
+  Math.random = function() { return 0.0; };
+  var event = EventEngine.selectEvent(s, cafeteria, ERA_V1);
+  Math.random = origRandom;
+  assertTrue(!event || event.type !== 'teacher', 'teacher should not fire with empty stash');
+});
+
+test('EventEngine.selectEvent skips teacher and bully when laidLowThisTurn', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  s.turn = 2;
+  s.heat = 100;
+  s.laidLowThisTurn = true;
+  State.addToStash('smarties', 5);
+  var cafeteria = ERA_V1.locations.find(function(l) { return l.id === 'cafeteria'; });
+  var origRandom = Math.random;
+  Math.random = function() { return 0.0; };
+  var event = EventEngine.selectEvent(s, cafeteria, ERA_V1);
+  Math.random = origRandom;
+  assertTrue(!event || (event.type !== 'teacher' && event.type !== 'bully'), 'no threats when laidLow');
+});

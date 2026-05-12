@@ -6,10 +6,12 @@ var EventEngine = (function() {
     var s = state;
 
     // Day 1: no threats or negative events — give the player a safe first turn
-    if (s.turn !== 1) {
-      var tChance = Heat.teacherChance(s.heat, location, s.teacherSickThisTurn);
-      if (Math.random() < tChance) {
-        return { type: 'teacher', cssClass: 'threat', id: 'teacher' };
+    if (s.turn !== 1 && !s.laidLowThisTurn) {
+      if (State.stashTotal() > 0) {
+        var tChance = Heat.teacherChance(s.heat, location, s.teacherSickThisTurn);
+        if (Math.random() < tChance) {
+          return { type: 'teacher', cssClass: 'threat', id: 'teacher' };
+        }
       }
 
       var bChance = Heat.bullyChance(location);
