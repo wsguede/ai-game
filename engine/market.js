@@ -61,5 +61,66 @@ var Market = (function() {
     return 'flat';
   }
 
-  return { updatePrices: updatePrices, getLocationPrice: getLocationPrice, getPriceTrend: getPriceTrend };
+  function getPriceBreakdown(candy, marketPrice, location, activeEffects) {
+    var steps = [];
+    var running = candy.basePrice;
+    steps.push({ label: 'base price', delta: null, value: running });
+
+    var globalEffects = (activeEffects || []).filter(function(e) {
+      return e.type === 'allCandy' || (e.type === 'byRisk' && e.risk === candy.risk);
+    });
+    var globalProduct = globalEffects.reduce(function(p, e) { return p * e.modifier; }, 1);
+
+    var pureDrift = globalProduct > 0 ? Math.round((marketPrice / globalProduct) * 100) / 100 : marketPrice;
+    var driftDelta = Math.round((pureDrift - running) * 100) / 100;
+    var driftPct   = running > 0 ? Math.round((pureDrift - running) / running * 100) : 0;
+    running = pureDrift;
+    steps.push({
+      label: 'market today (' + (driftPct >= 0 ? '+' : '') + driftPct + '%)',
+      delta: driftDelta,
+      value: running,
+    });
+
+    globalEffects.forEach(function(effect) {
+      var delta = Math.round((running * effect.modifier - running) * 100) / 100;
+      running   = Math.round(running * effect.modifier * 100) / 100;
+      steps.push({
+        label: effect.id.replace(/_/g, ' ') + ' (\xd7' + effect.modifier.toFixed(2) + ')',
+        delta: delta,
+        value: running,
+      });
+    });
+
+    var mod    = location.modifiers;
+    var locMod = null;
+    if (mod.byId && mod.byId[candy.id] != null)             locMod = mod.byId[candy.id];
+    else if (mod.byRisk && mod.byRisk[candy.risk] != null)  locMod = mod.byRisk[candy.risk];
+    else if (mod.all != null)                                locMod = mod.all;
+
+    if (locMod !== null) {
+      var locDelta = Math.round((running * locMod - running) * 100) / 100;
+      running      = Math.round(running * locMod * 100) / 100;
+      steps.push({
+        label: location.name.toLowerCase() + ' (\xd7' + locMod.toFixed(2) + ')',
+        delta: locDelta,
+        value: running,
+      });
+    }
+
+    (activeEffects || []).forEach(function(effect) {
+      if (effect.type !== 'byLocation' || effect.location !== location.id) return;
+      if (effect.risk && effect.risk !== candy.risk) return;
+      var delta = Math.round((running * effect.modifier - running) * 100) / 100;
+      running   = Math.round(running * effect.modifier * 100) / 100;
+      steps.push({
+        label: effect.id.replace(/_/g, ' ') + ' (\xd7' + effect.modifier.toFixed(2) + ')',
+        delta: delta,
+        value: running,
+      });
+    });
+
+    return steps;
+  }
+
+  return { updatePrices: updatePrices, getLocationPrice: getLocationPrice, getPriceTrend: getPriceTrend, getPriceBreakdown: getPriceBreakdown };
 })();

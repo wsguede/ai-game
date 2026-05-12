@@ -65,3 +65,46 @@ test('getPriceTrend returns correct strings', function() {
   assertEqual(Market.getPriceTrend(1.00, 0.95), 'down');
   assertEqual(Market.getPriceTrend(1.00, 0.85), 'downdown');
 });
+
+test('getPriceBreakdown: first step is base price with null delta', function() {
+  var smarties = ERA_V1.candies.find(function(c) { return c.id === 'smarties'; });
+  var cafeteria = ERA_V1.locations.find(function(l) { return l.id === 'cafeteria'; });
+  var steps = Market.getPriceBreakdown(smarties, 0.27, cafeteria, []);
+  assertEqual(steps[0].label, 'base price');
+  assertEqual(steps[0].value, 0.25);
+  assertEqual(steps[0].delta, null);
+});
+
+test('getPriceBreakdown: second step shows market drift delta', function() {
+  var smarties = ERA_V1.candies.find(function(c) { return c.id === 'smarties'; });
+  var cafeteria = ERA_V1.locations.find(function(l) { return l.id === 'cafeteria'; });
+  var steps = Market.getPriceBreakdown(smarties, 0.27, cafeteria, []);
+  assertEqual(steps[1].value, 0.27);
+  assertEqual(steps[1].delta, 0.02);
+});
+
+test('getPriceBreakdown: omits location step when no modifier applies', function() {
+  var smarties = ERA_V1.candies.find(function(c) { return c.id === 'smarties'; });
+  var cafeteria = ERA_V1.locations.find(function(l) { return l.id === 'cafeteria'; });
+  var steps = Market.getPriceBreakdown(smarties, 0.27, cafeteria, []);
+  assertEqual(steps.length, 2);
+});
+
+test('getPriceBreakdown: includes location step when modifier applies', function() {
+  var smarties = ERA_V1.candies.find(function(c) { return c.id === 'smarties'; });
+  var playground = ERA_V1.locations.find(function(l) { return l.id === 'playground'; });
+  var steps = Market.getPriceBreakdown(smarties, 0.27, playground, []);
+  assertEqual(steps.length, 3);
+  assertEqual(steps[2].delta, 0.04);
+});
+
+test('getPriceBreakdown: separates allCandy effect as its own step', function() {
+  var smarties = ERA_V1.candies.find(function(c) { return c.id === 'smarties'; });
+  var cafeteria = ERA_V1.locations.find(function(l) { return l.id === 'cafeteria'; });
+  var marketPrice = Math.round(0.27 * 1.30 * 100) / 100;
+  var effects = [{ id: 'halloween_spike', type: 'allCandy', modifier: 1.30, turnsLeft: 1 }];
+  var steps = Market.getPriceBreakdown(smarties, marketPrice, cafeteria, effects);
+  assertEqual(steps.length, 3);
+  assertTrue(steps[2].label.indexOf('halloween') !== -1, 'step label should include effect id');
+  assertTrue(steps[2].delta > 0, 'halloween effect adds positive delta');
+});

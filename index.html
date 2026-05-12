@@ -93,6 +93,27 @@
     .cal-bar-wrap { position: relative; margin-top: 4px; }
     .cal-tick { position: absolute; top: 0; width: 2px; height: 8px; background: #555; transform: translateX(-50%); pointer-events: none; }
     .cal-tick-label { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 10px; white-space: nowrap; }
+    /* Debug price tooltip */
+    .price-cell { position: relative; }
+    .dbg-tip {
+      display: none; position: absolute; left: 0; top: 100%; z-index: 100;
+      background: #111; border: 1px solid rgba(255,221,0,0.4);
+      padding: 10px 12px; min-width: 220px; font-size: 11px;
+      line-height: 1.9; white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6); pointer-events: none;
+    }
+    .price-cell:hover .dbg-tip { display: block; }
+    .dbg-label { font-size: 9px; letter-spacing: 2px; color: #ffdd00; margin-bottom: 4px; }
+    .dbg-row { display: flex; justify-content: space-between; gap: 20px; }
+    .dbg-amt { min-width: 55px; text-align: right; }
+    .dbg-lbl { color: #555; }
+    .dbg-base { color: #ccc; }
+    .dbg-up   { color: #4cff72; }
+    .dbg-down { color: #ff4444; }
+    .dbg-muted { color: #888; }
+    .dbg-total .dbg-amt { color: #ffdd00; font-weight: bold; }
+    .dbg-total .dbg-lbl { color: #aaa; }
+    .dbg-divider { border: none; border-top: 1px solid #1e1e1e; margin: 4px 0; }
   </style>
 </head>
 <body>

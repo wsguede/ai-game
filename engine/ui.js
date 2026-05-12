@@ -1,4 +1,5 @@
 var UI = (function() {
+  var DEBUG = new URLSearchParams(window.location.search).has('debug');
   var TREND_SYMBOLS = { flat: '━', up: '▲', upup: '▲▲', down: '▼', downdown: '▼▼' };
   var RISK_CLASS    = { low: 'risk-low', med: 'risk-med', high: 'risk-high' };
   var VOL_CLASS     = { low: 'vol-low',  med: 'vol-med',  high: 'vol-high' };
@@ -71,6 +72,34 @@ var UI = (function() {
     document.getElementById('location-section').innerHTML = html;
   }
 
+  function _renderDebugTooltip(candy, marketPrice, locPrice, location, activeEffects, previousSeenPrices) {
+    var steps    = Market.getPriceBreakdown(candy, marketPrice, location, activeEffects);
+    var lastSeen = previousSeenPrices[candy.id] || candy.basePrice;
+    var changePct = lastSeen > 0 ? Math.round((locPrice - lastSeen) / lastSeen * 100) : 0;
+    var changeCls  = changePct > 0 ? 'dbg-up' : changePct < 0 ? 'dbg-down' : '';
+    var changeSign = changePct > 0 ? '+' : '';
+    var TSYM = { flat: '━', up: '▲', upup: '▲▲', down: '▼', downdown: '▼▼' };
+    var sym  = TSYM[Market.getPriceTrend(lastSeen, locPrice)] || '';
+
+    var html = '<div class="dbg-tip"><div class="dbg-label">PRICE BREAKDOWN</div>';
+    steps.forEach(function(step) {
+      if (step.delta === null) {
+        html += '<div class="dbg-row"><span class="dbg-amt dbg-base">$' + step.value.toFixed(2) + '</span><span class="dbg-lbl">' + step.label + '</span></div>';
+      } else {
+        var cls  = step.delta >= 0 ? 'dbg-up' : 'dbg-down';
+        var sign = step.delta >= 0 ? '+' : '';
+        html += '<div class="dbg-row"><span class="dbg-amt ' + cls + '">' + sign + '$' + Math.abs(step.delta).toFixed(2) + '</span><span class="dbg-lbl">' + step.label + '</span></div>';
+      }
+    });
+    html += '<div class="dbg-divider"></div>';
+    html += '<div class="dbg-row dbg-total"><span class="dbg-amt">$' + locPrice.toFixed(2) + '</span><span class="dbg-lbl">you pay / receive</span></div>';
+    html += '<div class="dbg-divider"></div>';
+    html += '<div class="dbg-row"><span class="dbg-amt dbg-muted">$' + lastSeen.toFixed(2) + '</span><span class="dbg-lbl">last seen</span></div>';
+    html += '<div class="dbg-row"><span class="dbg-amt ' + changeCls + '">' + changeSign + changePct + '% ' + sym + '</span><span class="dbg-lbl">change</span></div>';
+    html += '</div>';
+    return html;
+  }
+
   function renderMarket(candies, currentPrices, previousSeenPrices, stash, location, activeEffects, cash, stashCapacity) {
     var stashUsed  = Object.values(stash).reduce(function(s, q) { return s + q; }, 0);
     var stashAvail = stashCapacity - stashUsed;
@@ -101,7 +130,9 @@ var UI = (function() {
             '<div class="ct-row"><span class="ct-label">Heat/unit</span><span>+' + candy.heatPerUnit + '</span></div>' +
           '</div>' +
         '</td>' +
-        '<td class="price-cell">$' + locPrice.toFixed(2) + ' <span class="trend-wrap"><span class="trend-' + trend + '">' + TREND_SYMBOLS[trend] + '</span><div class="trend-tip">' + pctLabel + '</div></span></td>' +
+        '<td class="price-cell">$' + locPrice.toFixed(2) + ' <span class="trend-wrap"><span class="trend-' + trend + '">' + TREND_SYMBOLS[trend] + '</span><div class="trend-tip">' + pctLabel + '</div></span>' +
+        (DEBUG ? _renderDebugTooltip(candy, basePrice, locPrice, location, activeEffects, previousSeenPrices) : '') +
+        '</td>' +
         '<td>' + inBag + '</td>' +
       '</tr>';
     }).join('');
