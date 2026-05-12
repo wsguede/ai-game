@@ -33,6 +33,7 @@ var State = (function() {
       laidLowNextTurn: false,
       teacherSickThisTurn: false,
       teacherSickNextTurn: false,
+      pendingTravelDest: null,
       era: era,
     };
     return _state;

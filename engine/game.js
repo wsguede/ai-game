@@ -15,14 +15,6 @@ var Game = (function() {
       EventEngine.executeEffect(calEventObj, s);
     }
 
-    // Capture what the player last saw (location-adjusted) before prices update
-    var currentLoc = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
-    var seenPrices = {};
-    s.era.candies.forEach(function(c) {
-      seenPrices[c.id] = Market.getLocationPrice(s.currentPrices[c.id], c, currentLoc, s.activeEffects);
-    });
-    s.previousSeenPrices = seenPrices;
-
     // Market update
     var newPrices = Market.updatePrices(s.currentPrices, s.era.candies, s.activeEffects);
     s.currentPrices = newPrices;
@@ -92,6 +84,20 @@ var Game = (function() {
     // Bully event must be resolved before ending turn
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
 
+    // Capture seen prices at departing location before any travel change
+    var captureLoc = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
+    var seenPrices = {};
+    s.era.candies.forEach(function(c) {
+      seenPrices[c.id] = Market.getLocationPrice(s.currentPrices[c.id], c, captureLoc, s.activeEffects);
+    });
+    s.previousSeenPrices = seenPrices;
+
+    // Apply deferred travel destination
+    if (s.pendingTravelDest) {
+      s.currentLocation = s.pendingTravelDest;
+      s.pendingTravelDest = null;
+    }
+
     // Heat decay
     var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
     s.heat = Heat.decay(s.heat, location);
@@ -107,7 +113,7 @@ var Game = (function() {
   function travel(locationId) {
     var s = State.get();
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
-    s.currentLocation = locationId;
+    s.pendingTravelDest = locationId;
     if (_travelHints < 2) {
       _travelHints++;
       s._travelHint = true;
