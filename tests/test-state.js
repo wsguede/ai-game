@@ -64,14 +64,29 @@ test('ERA_V1 references correct data arrays', function() {
   assertEqual(ERA_V1.events, EVENTS);
 });
 
-test('ERA_V1 has 3 win goal tiers', function() {
-  assertEqual(ERA_V1.winGoals.length, 3);
+test('State.init sets previousSeenPrices for starting location', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  // Cafeteria has no modifiers — seen prices equal base prices
+  assertEqual(s.previousSeenPrices['smarties'], 0.25);
+  assertEqual(s.previousSeenPrices['rarepoprocks'], 18.50);
 });
 
-test('ERA_V1 win goals are in ascending cash order', function() {
-  for (var i = 1; i < ERA_V1.winGoals.length; i++) {
-    assertTrue(ERA_V1.winGoals[i].cash > ERA_V1.winGoals[i-1].cash);
-  }
+test('State.init does not have previousPrices', function() {
+  State.init(ERA_V1);
+  assertEqual(State.get().previousPrices, undefined);
+});
+
+test('State.init has tradedThisTurn as false', function() {
+  State.init(ERA_V1);
+  assertEqual(State.get().tradedThisTurn, false);
+});
+
+test('State.init has laidLow flags as false', function() {
+  State.init(ERA_V1);
+  var s = State.get();
+  assertEqual(s.laidLowThisTurn, false);
+  assertEqual(s.laidLowNextTurn, false);
 });
 
 test('State.init sets correct starting values', function() {

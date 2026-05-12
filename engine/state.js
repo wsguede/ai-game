@@ -5,6 +5,12 @@ var State = (function() {
     var initialPrices = {};
     era.candies.forEach(function(c) { initialPrices[c.id] = c.basePrice; });
 
+    var startLocation = era.locations[0];
+    var initialSeenPrices = {};
+    era.candies.forEach(function(c) {
+      initialSeenPrices[c.id] = Market.getLocationPrice(initialPrices[c.id], c, startLocation, []);
+    });
+
     _state = {
       turn: 1,
       maxTurns: era.maxTurns,
@@ -16,12 +22,15 @@ var State = (function() {
       currentLocation: era.locations[0].id,
       gamePhase: 'playing',  // 'playing' | 'won' | 'lost'
       currentPrices: initialPrices,
-      previousPrices: initialPrices,
+      previousSeenPrices: initialSeenPrices,
       activeEffects: [],
       pendingNotifications: [],
       pendingEvent: null,
       bulkDealActive: false,
       bulkDealUsed: false,
+      tradedThisTurn: false,
+      laidLowThisTurn: false,
+      laidLowNextTurn: false,
       teacherSickThisTurn: false,
       teacherSickNextTurn: false,
       era: era,
