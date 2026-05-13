@@ -118,7 +118,11 @@ var UI = (function() {
     document.getElementById('market-section').innerHTML =
       '<div class="section-header">MARKET</div>' +
       '<table class="market-table">' +
-        '<tr><th>CANDY</th><th>PRICE</th><th>IN BAG</th></tr>' +
+        '<tr>' +
+          '<th>🍬 CANDY</th>' +
+          '<th>💰 PRICE &nbsp;<span style="color:#4cff72;font-weight:normal;letter-spacing:0">$' + cash.toFixed(2) + '</span></th>' +
+          '<th>🎒 IN BAG &nbsp;<span style="color:#aaa;font-weight:normal;letter-spacing:0">' + stashUsed + '/' + stashCapacity + '</span></th>' +
+        '</tr>' +
         rows +
       '</table>';
   }
