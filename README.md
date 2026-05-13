@@ -16,14 +16,14 @@ npm run dev     # http://localhost:5173, hot reload
 
 ## Build
 
-```bash
-npm run build   # produces docs/
-git add docs/
-git commit -m "chore: build"
-git push
-```
+Push to `main` — GitHub Actions builds and deploys automatically.
 
-`docs/` is committed to git and served by GitHub Pages.
+To preview the build locally:
+
+```bash
+npm run build   # produces docs/ locally (gitignored)
+npm run preview # serve at http://localhost:4173
+```
 
 ## Test
 

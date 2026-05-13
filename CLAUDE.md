@@ -45,10 +45,12 @@ Open `tests/index.html` in a browser. No CLI runner. Helpers: `test()`, `assertE
 ## Build and Deploy
 ```bash
 npm run dev      # Vite dev server with hot reload
-npm run build    # builds to docs/ — commit this folder for GitHub Pages
+npm run build    # builds to docs/ locally (gitignored — do not commit)
 npm run preview  # preview built output locally
+npm test         # run Vitest unit tests
+npm run lint     # run ESLint on src/
 ```
-After `npm run build`, commit `docs/` and push to deploy.
+Push to `main` to trigger CI/CD. GitHub Actions runs tests, lint, build, and deploys `docs/` to the `pages` branch automatically.
 
 ## Git Workflow
 GitHub Flow: feature branches off `main`, merge via PR (or direct commit for solo/trivial work). `main` is always deployable.
