@@ -17,7 +17,7 @@ src/
   main.js        — barrel: imports all source files in dependency order
 index.html       — Vite entry point; all HTML + CSS
 tests/           — browser-only test harness (open tests/index.html, no CLI runner)
-docs/            — Vite build output; committed to git; served by GitHub Pages
+docs/            — Vite build output (gitignored — CI deploys to pages branch)
 planning/        — design specs, implementation plans, architecture docs
 ```
 

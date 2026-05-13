@@ -4,7 +4,7 @@ A browser-based trading game. Buy candy cheap, sell it high, and don't let Mrs. 
 
 ## Play
 
-Open `docs/index.html` directly in your browser — no server needed.
+Open the live game at [GitHub Pages](https://wsguede.github.io/ai-game/) or run `npm run build && npm run preview` for a local preview.
 
 ## Develop
 
@@ -38,7 +38,7 @@ src/
   main.js        — barrel: imports all source files in dependency order
 index.html       — Vite entry point; all HTML + CSS; onclick= handlers call window.Game.*
 tests/           — browser-only test harness
-docs/            — Vite build output, committed for GitHub Pages
+docs/            — Vite build output (gitignored — CI deploys to pages branch)
 planning/        — design specs, implementation plans, architecture and workflow docs
 ```
 
