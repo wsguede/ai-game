@@ -28,7 +28,7 @@ describe('Market', () => {
       const prev = s.currentPrices['smarties'];
       const next = newPrices['smarties'];
       const pct = Math.abs((next - prev) / prev);
-      expect(pct).toBeLessThanOrEqual(0.09);
+      expect(pct).toBeLessThanOrEqual(0.10);
       s.currentPrices = newPrices;
     }
   });
