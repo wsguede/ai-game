@@ -22,6 +22,16 @@ var UI = (function() {
           '</div>';
       });
     }
+    var heatPips = '';
+    for (var i = 0; i < 10; i++) {
+      var threshold = (i + 1) * 10;
+      var cls = state.heat >= threshold ? (state.heat >= 70 ? 'active' : 'warn') : '';
+      heatPips += '<div class="heat-pip ' + cls + '"></div>';
+    }
+    var principalDots = '';
+    for (var j = 0; j < 3; j++) {
+      principalDots += '<span style="color:' + (j < state.principalVisits ? '#ff4444' : '#333') + '">■</span>';
+    }
     document.getElementById('gift-section').innerHTML =
       '<div class="section-header">SCHOOL YEAR</div>' +
       '<div class="cal-bar-wrap">' +
@@ -31,6 +41,18 @@ var UI = (function() {
       '<div class="gift-label">' +
         '<span>DAY ' + state.turn + ' / ' + state.maxTurns + '</span>' +
         '<span>SUMMER IN ' + daysLeft + ' DAYS</span>' +
+      '</div>' +
+      '<div class="threat-row">' +
+        '<span class="threat-stat">' +
+          '<span class="threat-label">HEAT</span>' +
+          '<span class="heat-bar">' + heatPips + '</span>' +
+          '<div class="threat-tip">How much attention you\'ve drawn. High heat means teachers and bullies are more likely to target you. Decays when you move locations or lay low.</div>' +
+        '</span>' +
+        '<span class="threat-stat">' +
+          '<span class="threat-label">PRINCIPAL</span>' +
+          '<span>' + principalDots + '</span>' +
+          '<div class="threat-tip">Times you\'ve been sent to the principal\'s office. Three visits and your parents get called — game over.</div>' +
+        '</span>' +
       '</div>';
   }
 

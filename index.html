@@ -112,6 +112,11 @@
     .dbg-total .dbg-amt { color: #ffdd00; font-weight: bold; }
     .dbg-total .dbg-lbl { color: #aaa; }
     .dbg-divider { border: none; border-top: 1px solid #1e1e1e; margin: 4px 0; }
+    .threat-row { display: flex; justify-content: flex-end; gap: 16px; font-size: 11px; color: #555; padding: 4px 0 8px; border-bottom: 1px solid #1a1a1a; margin-bottom: 2px; }
+    .threat-stat { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: default; }
+    .threat-label { font-size: 9px; letter-spacing: 1px; color: #444; }
+    .threat-stat:hover .threat-tip { display: block; }
+    .threat-tip { display: none; position: absolute; bottom: 140%; right: 0; background: #1a1a1a; border: 1px solid #555; padding: 8px 12px; width: 200px; z-index: 10; font-size: 11px; line-height: 1.6; color: #ccc; pointer-events: none; white-space: normal; }
   </style>
 </head>
 <body>
