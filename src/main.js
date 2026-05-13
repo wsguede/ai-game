@@ -1,0 +1,10 @@
+import './data/candies.js';
+import './data/locations.js';
+import './data/events.js';
+import './data/eras.js';
+import './engine/state.js';
+import './engine/market.js';
+import './engine/heat.js';
+import './engine/event-engine.js';
+import './engine/ui.js';
+import './engine/game.js';
