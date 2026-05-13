@@ -4,27 +4,6 @@ var UI = (function() {
   var RISK_CLASS    = { low: 'risk-low', med: 'risk-med', high: 'risk-high' };
   var VOL_CLASS     = { low: 'vol-low',  med: 'vol-med',  high: 'vol-high' };
 
-  function renderStatusBar(state) {
-    var heatPips = '';
-    for (var i = 0; i < 10; i++) {
-      var threshold = (i + 1) * 10;
-      var cls = state.heat >= threshold ? (state.heat >= 70 ? 'active' : 'warn') : '';
-      heatPips += '<div class="heat-pip ' + cls + '"></div>';
-    }
-    var principalDots = '';
-    for (var j = 0; j < 3; j++) {
-      principalDots += '<span style="color:' + (j < state.principalVisits ? '#ff4444' : '#333') + '">■</span> ';
-    }
-    document.getElementById('status-bar').innerHTML =
-      '<div class="status-row">' +
-        '<div>📅 DAY <span>' + state.turn + '</span>/' + state.maxTurns + '</div>' +
-        '<div>💰 <span class="green">$' + state.cash.toFixed(2) + '</span></div>' +
-        '<div>🎒 <span>' + State.stashTotal() + '</span>/' + state.stashCapacity + '</div>' +
-        '<div>🔥 <div class="heat-bar">' + heatPips + '</div></div>' +
-        '<div>🚨 ' + principalDots + '</div>' +
-      '</div>';
-  }
-
   function renderCalendarBar(state) {
     var pct = Math.min(100, (state.turn / state.maxTurns) * 100);
     var daysLeft = state.maxTurns - state.turn;
@@ -211,7 +190,6 @@ var UI = (function() {
 
   function render(state) {
     var location = state.era.locations.find(function(l) { return l.id === state.currentLocation; });
-    renderStatusBar(state);
     renderCalendarBar(state);
     renderLocations(state.era.locations, state.currentLocation);
     renderMarket(state.era.candies, state.currentPrices, state.previousSeenPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity);
