@@ -6,4 +6,8 @@ export default defineConfig({
     outDir: 'docs',
     emptyOutDir: true,
   },
+  test: {
+    environment: 'jsdom',
+    passWithNoTests: true,
+  },
 });
