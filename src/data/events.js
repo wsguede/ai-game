@@ -1,27 +1,27 @@
 // Calendar events — not in the random pool; referenced directly by era calendarEvents map.
 // Effects are applied BEFORE price calculation on their day (same-day visibility).
-var HALLOWEEN_SPIKE = {
+var HALLOWEEN_SPIKE = window.HALLOWEEN_SPIKE = {
   id: 'halloween_spike', type: 'market', cssClass: 'market',
   text: '!! HALLOWEEN !! Everyone wants candy. Prices surging across the board today.',
   effect: function(state) {
     state.activeEffects.push({ id: 'halloween_spike', type: 'allCandy', modifier: 1.30, turnsLeft: 1 });
   },
 };
-var HALLOWEEN_CRASH = {
+var HALLOWEEN_CRASH = window.HALLOWEEN_CRASH = {
   id: 'halloween_crash', type: 'market', cssClass: 'market',
   text: '!! POST-HALLOWEEN !! Sugar crash. Everyone is sick of candy. Prices dropping today.',
   effect: function(state) {
     state.activeEffects.push({ id: 'halloween_crash', type: 'allCandy', modifier: 0.80, turnsLeft: 1 });
   },
 };
-var VALENTINES_SURGE = {
+var VALENTINES_SURGE = window.VALENTINES_SURGE = {
   id: 'valentines_surge', type: 'market', cssClass: 'market',
   text: '!! VALENTINE\'S DAY !! Rich kids in a panic. Premium candy prices surge for 2 days.',
   effect: function(state) {
     state.activeEffects.push({ id: 'valentines_surge', type: 'byRisk', risk: 'high', modifier: 1.40, turnsLeft: 2 });
   },
 };
-var SPRING_BREAK = {
+var SPRING_BREAK = window.SPRING_BREAK = {
   id: 'spring_break', type: 'market', cssClass: 'market',
   text: '!! SPRING BREAK !! Energy is high and everyone is stocking up. Prices up across the board for 2 days.',
   effect: function(state) {
@@ -31,7 +31,7 @@ var SPRING_BREAK = {
 
 // Random event pool — fires with 40% chance on non-calendar days.
 // Add allowOnDay1: false to any future events that shouldn't fire on turn 1.
-var EVENTS = [
+var EVENTS = window.EVENTS = [
   {
     id: 'bulk_deal',
     type: 'market',

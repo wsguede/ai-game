@@ -1,4 +1,4 @@
-var CANDIES = [
+var CANDIES = window.CANDIES = [
   // LOW risk
   { id: 'smarties',       name: 'Smarties',       risk: 'low',  volatility: 'low',  basePrice: 0.25,  heatPerUnit: 0.5, riskWeight: 1 },
   { id: 'dumdums',        name: 'Dum Dums',        risk: 'low',  volatility: 'med',  basePrice: 0.40,  heatPerUnit: 0.5, riskWeight: 1 },

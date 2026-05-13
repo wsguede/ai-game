@@ -1,4 +1,4 @@
-var LOCATIONS = [
+var LOCATIONS = window.LOCATIONS = [
   {
     id: 'cafeteria',
     name: 'CAFETERIA',
