@@ -26,6 +26,11 @@ var Heat = (function() {
     return BULLY_CHANCE[location.bullyRisk];
   }
 
+  // Whether a teacher encounter results in a catch (heat / 100 probability)
+  function teacherCaught(heat) {
+    return Math.random() < heat / 100;
+  }
+
   // Risk-weighted stash value: sum(qty * riskWeight * price)
   function stashRiskValue(stash, candies, currentPrices) {
     return candies.reduce(function(total, candy) {
@@ -55,5 +60,5 @@ var Heat = (function() {
     state.heat = Math.max(0, state.heat - 10);
   }
 
-  return { generate: generate, decay: decay, teacherChance: teacherChance, bullyChance: bullyChance, stashRiskValue: stashRiskValue, resolveTeacherCatch: resolveTeacherCatch, applyTeacherCatch: applyTeacherCatch, applyBullyRob: applyBullyRob };
+  return { generate: generate, decay: decay, teacherChance: teacherChance, bullyChance: bullyChance, teacherCaught: teacherCaught, stashRiskValue: stashRiskValue, resolveTeacherCatch: resolveTeacherCatch, applyTeacherCatch: applyTeacherCatch, applyBullyRob: applyBullyRob };
 })();

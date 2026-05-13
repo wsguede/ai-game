@@ -89,3 +89,20 @@ test('Heat.applyBullyRob: heat does not go below 0', function() {
   Heat.applyBullyRob(fakeState);
   assertEqual(fakeState.heat, 0);
 });
+
+test('Heat.teacherCaught: always false at 0 heat', function() {
+  for (var i = 0; i < 20; i++) {
+    assertEqual(Heat.teacherCaught(0), false);
+  }
+});
+
+test('Heat.teacherCaught: always true at 100 heat', function() {
+  for (var i = 0; i < 20; i++) {
+    assertEqual(Heat.teacherCaught(100), true);
+  }
+});
+
+test('Heat.teacherCaught: returns a boolean', function() {
+  var result = Heat.teacherCaught(50);
+  assertTrue(result === true || result === false, 'should return boolean');
+});
