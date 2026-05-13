@@ -9,7 +9,7 @@ var Heat = (function() {
 
   // Heat lost at end of turn (passive + location bonus)
   function decay(currentHeat, location) {
-    var amount = 5 + location.heatDecayBonus;
+    var amount = 2 + location.heatDecayBonus;
     return Math.max(0, currentHeat - amount);
   }
 

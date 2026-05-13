@@ -8,19 +8,19 @@ test('Heat.generate: high-risk candy generates 3.0 per unit', function() {
   assertEqual(Heat.generate(rpr, 5), 15.0);
 });
 
-test('Heat.decay: removes 5 heat by default', function() {
+test('Heat.decay: removes 2 heat by default', function() {
   var cafeteria = LOCATIONS.find(function(l) { return l.id === 'cafeteria'; });
-  assertEqual(Heat.decay(20, cafeteria), 15);
+  assertEqual(Heat.decay(20, cafeteria), 18);
 });
 
-test('Heat.decay: library removes 15 heat (5 + 10 bonus)', function() {
+test('Heat.decay: library removes 5 heat (2 + 3 bonus)', function() {
   var library = LOCATIONS.find(function(l) { return l.id === 'library'; });
-  assertEqual(Heat.decay(20, library), 5);
+  assertEqual(Heat.decay(20, library), 15);
 });
 
 test('Heat.decay: does not go below 0', function() {
   var cafeteria = LOCATIONS.find(function(l) { return l.id === 'cafeteria'; });
-  assertEqual(Heat.decay(3, cafeteria), 0);
+  assertEqual(Heat.decay(1, cafeteria), 0);
 });
 
 test('Heat.teacherChance: zero at none patrol risk', function() {

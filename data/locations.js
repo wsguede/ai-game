@@ -44,10 +44,10 @@ var LOCATIONS = [
     patrolRisk: 'low',
     bullyRisk: 'none',
     modifiers: { byRisk: { high: 1.20 }, byId: {}, all: null },
-    heatDecayBonus: 10,
+    heatDecayBonus: 3,
     tooltip: [
       { cls: 'tip-good',    text: '+ High-end candy premium' },
-      { cls: 'tip-neutral', text: '~ Heat decays 2x faster' },
+      { cls: 'tip-neutral', text: '~ Heat decays 2.5× faster' },
       { cls: 'tip-bad',     text: '- Low volume, no cheap demand' },
     ],
   },
