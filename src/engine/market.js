@@ -1,4 +1,4 @@
-var Market = (function() {
+var Market = window.Market = (function() {
   var VOLATILITY_RANGES = {
     low:  { min: -0.08, max: 0.08 },
     med:  { min: -0.18, max: 0.18 },

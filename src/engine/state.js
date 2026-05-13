@@ -1,4 +1,5 @@
-var State = (function() {
+var State = window.State = (function() {
+  var Market = window.Market;
   var _state = {};
 
   function init(era) {

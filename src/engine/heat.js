@@ -1,4 +1,4 @@
-var Heat = (function() {
+var Heat = window.Heat = (function() {
   var PATROL_CHANCE = { none: 0, low: 0.05, med: 0.15, high: 0.30 };
   var BULLY_CHANCE  = { none: 0, low: 0.05, med: 0.15, high: 0.25 };
 
