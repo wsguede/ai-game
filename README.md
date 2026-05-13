@@ -27,7 +27,13 @@ npm run preview # serve at http://localhost:4173
 
 ## Test
 
-Open `tests/index.html` in a browser. No CLI runner — tests run directly in the page. All tests must show ✓.
+Run unit tests from the command line:
+
+```bash
+npm test   # 63 tests across heat, market, state, event-engine
+```
+
+For manual UI testing, open `tests/index.html` in a browser — the legacy test harness is kept as a reference.
 
 ## Project Structure
 

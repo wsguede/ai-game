@@ -40,7 +40,8 @@ Data file `eras.js` uses `window.CANDIES`, `window.LOCATIONS` etc. directly sinc
 `candies → locations → events → eras → state → market → heat → event-engine → ui → game`
 
 ## Test Harness
-Open `tests/index.html` in a browser. No CLI runner. Helpers: `test()`, `assertEqual()`, `assertTrue()`, `assertClose()`. Heat, Market, State, and EventEngine have automated tests. UI and Game are verified manually in the browser.
+**CLI:** `npm test` — Vitest runs all tests in `src/tests/` (heat, market, state, event-engine). 63 tests.
+**Browser:** Open `tests/index.html` as a manual reference. Helpers: `test()`, `assertEqual()`, `assertTrue()`, `assertClose()`. UI and Game are verified manually in the browser.
 
 ## Build and Deploy
 ```bash
