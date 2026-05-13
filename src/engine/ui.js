@@ -185,7 +185,7 @@ var UI = window.UI = (function() {
     } else if (state.tradedThisTurn) {
       html = '<button class="action-btn" onclick="Game.endTurn()">END TURN →</button>';
     } else {
-      html = '<button class="action-btn" onclick="Game.layLow()">LAY LOW (−20 heat)</button>';
+      html = '<button class="action-btn" onclick="Game.layLow()">LAY LOW (−10 heat)</button>';
     }
     document.getElementById('action-bar').innerHTML = html;
   }

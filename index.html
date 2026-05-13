@@ -120,18 +120,18 @@
   </style>
 </head>
 <body>
-  <div id="game">
-    <div class="title-bar">★ CANDY WARS ★</div>
+  <main id="game">
+    <header class="title-bar">★ CANDY WARS ★</header>
     <div id="gift-section"></div>
     <div id="location-section"></div>
     <div id="market-section"></div>
     <div id="notifications"></div>
     <div id="event-box" class="event-box"></div>
     <div id="action-bar" class="action-bar"></div>
-  </div>
+  </main>
 
   <!-- Buy/Sell Modal -->
-  <div id="trade-modal" class="modal-overlay">
+  <div id="trade-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Trade candy">
     <div class="modal">
       <h3 id="modal-title">BUY CANDY</h3>
       <p id="modal-info"></p>
@@ -146,18 +146,18 @@
       <div id="modal-error" class="modal-error"></div>
       <div class="modal-actions">
         <button class="action-btn" id="modal-confirm">CONFIRM</button>
-        <button class="action-btn" id="modal-cancel">CANCEL</button>
+        <button class="action-btn" id="modal-cancel" aria-label="Cancel trade">CANCEL</button>
       </div>
     </div>
   </div>
 
   <!-- Win/Loss Screen -->
-  <div id="end-screen" class="screen-overlay">
+  <div id="end-screen" class="screen-overlay" role="dialog" aria-modal="true" aria-label="Game over">
     <div class="end-screen" id="end-content"></div>
   </div>
 
   <!-- Intro Dialog -->
-  <div id="intro-modal" class="modal-overlay">
+  <div id="intro-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Welcome to Candy Wars">
     <div class="modal">
       <h3 style="text-align:center;letter-spacing:3px;margin-bottom:16px">★ CANDY WARS ★</h3>
       <div class="intro-section">
