@@ -1,4 +1,10 @@
-var Game = (function() {
+var Game = window.Game = (function() {
+  var State = window.State;
+  var Market = window.Market;
+  var Heat = window.Heat;
+  var EventEngine = window.EventEngine;
+  var UI = window.UI;
+  var ERA_V1 = window.ERA_V1;
   var _tradeMode  = null;  // 'buy' | 'sell'
   var _tradeCandy = null;  // candy id
   var _maxBuy     = 0;

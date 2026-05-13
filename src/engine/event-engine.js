@@ -1,4 +1,6 @@
-var EventEngine = (function() {
+var EventEngine = window.EventEngine = (function() {
+  var State = window.State;
+  var Heat = window.Heat;
   // Select the event for this turn. Returns event object or null.
   // Teacher and bully are checked first (probability-based).
   // Pool events fire with 40% base chance from eligible events.

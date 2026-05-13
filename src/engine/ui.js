@@ -1,4 +1,5 @@
-var UI = (function() {
+var UI = window.UI = (function() {
+  var Market = window.Market;
   var DEBUG = new URLSearchParams(window.location.search).has('debug');
   var TREND_SYMBOLS = { flat: '━', up: '▲', upup: '▲▲', down: '▼', downdown: '▼▼' };
   var RISK_CLASS    = { low: 'risk-low', med: 'risk-med', high: 'risk-high' };
