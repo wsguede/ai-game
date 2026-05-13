@@ -2,14 +2,22 @@
 
 ## Branching — GitHub Flow
 
-`main` is always deployable. All new work goes on a short-lived feature branch.
+`main` is always deployable. **All changes go on a feature branch — no direct commits to `main`.**
 
 ```
 main
  └── feat/teacher-reform      ← branch off main
       └── [commits]
-      └── merge → main        ← PR or direct merge
+      └── PR → review → merge → main
 ```
+
+**Workflow for every change:**
+1. `git checkout -b <type>/<name>` — branch off latest `main`
+2. Make changes, commit as you go
+3. `git push -u origin <branch>`
+4. Open a PR — CI runs tests, lint, and build automatically
+5. Merge the PR — CI deploys to GitHub Pages
+6. Delete the branch
 
 **Branch naming:**
 - `feat/<name>` — new feature
@@ -25,10 +33,15 @@ Format:
 ```
 <type>: <short description>
 
-[optional body]
+- Bullet explaining one concrete thing that changed
+- Bullet explaining another change or why it was needed
+- Reference any constraints, tradeoffs, or non-obvious decisions
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
+
+The **subject line** (first line) is the high-level summary — what changed, in plain English.
+The **body** is the lower-level detail — what specifically was done, why, and anything a future reader needs to understand the decision. Omit the body only for genuinely trivial changes (a typo fix, a single constant rename).
 
 **Allowed types:**
 
@@ -50,11 +63,27 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 **Examples:**
 ```
 feat: two-stage teacher resolution — caught vs suspicious
-fix: trend indicator shows change vs last seen price
-docs: add v1.6 design spec — project structure overhaul
-chore: add Vite build pipeline
-refactor: move engine and data files into src/
-test: add teacherCaught boundary tests
+
+- Low-value stash ($0–$20): confiscation only, no principal visit
+- Medium-value stash ($20–$60): confiscation + principal visit
+- High-value stash ($60+): confiscation + principal + heat spike
+- Fixes flat-rate catch that didn't scale with how much candy you held
+```
+
+```
+fix: load market and heat before state in main.js
+
+- state.js captures window.Market and window.Heat at IIFE execution time
+- Previous import order loaded state.js first, leaving both undefined
+- Swapped order: market → heat → state
+```
+
+```
+chore: install Vitest and configure jsdom test environment
+
+- Vitest shares vite.config.js — no separate config file needed
+- jsdom required because engine files reference window.* globals
+- passWithNoTests: true so CI exits 0 before any test files exist
 ```
 
 ## PR Description Template
@@ -62,16 +91,26 @@ test: add teacherCaught boundary tests
 ```markdown
 ## Summary
 - [bullet describing what changed]
-- [bullet describing why]
+- [bullet describing why / what problem it solves]
 
 ## Test Plan
-- [ ] Open tests/index.html — all tests pass
-- [ ] Open game in browser — plays correctly, zero console errors
-- [ ] npm run build — docs/ produced, opens via file://
+- [ ] `npm test` — all tests pass
+- [ ] `npm run lint` — no errors
+- [ ] Open game in browser (`npm run dev`) — plays correctly, zero console errors
+- [ ] UI changes verified manually in browser
 
 🤖 Generated with Claude Code
 ```
 
-## Build Before Pushing
+## CI/CD — What Runs on Push
 
-Always run `npm run build` and commit `docs/` before pushing a release to `main`. GitHub Pages serves from `docs/`.
+GitHub Actions runs automatically on every push and PR:
+
+| Job | Trigger | What it does |
+|-----|---------|--------------|
+| `test` | every push/PR | `npm test` — 63 Vitest unit tests |
+| `lint` | every push/PR | `npm run lint` — ESLint on `src/` |
+| `build` | after test+lint pass | `npm run build` — Vite build |
+| `deploy` | push to `main` only | Deploys `docs/` to `pages` branch → GitHub Pages |
+
+`docs/` is **gitignored** — never commit it manually. CI produces and deploys it automatically.

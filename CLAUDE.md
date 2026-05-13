@@ -54,10 +54,15 @@ npm run lint     # run ESLint on src/
 Push to `main` to trigger CI/CD. GitHub Actions runs tests, lint, build, and deploys `docs/` to the `pages` branch automatically.
 
 ## Git Workflow
-GitHub Flow: feature branches off `main`, merge via PR (or direct commit for solo/trivial work). `main` is always deployable.
+GitHub Flow: all changes on a feature branch, pushed and merged via PR. No direct commits to `main`. `main` is always deployable.
+
+Branch: `git checkout -b <type>/<name>` → commit → `git push -u origin <branch>` → open PR → CI passes → merge.
 
 Conventional Commits: `feat:` `fix:` `docs:` `chore:` `refactor:` `test:`
 Subject line: imperative mood, ≤72 chars, no trailing period.
+Body: bullet-point detail on what changed and why (omit only for trivial one-liners).
+
+See `planning/WORKFLOW.md` for full branching rules, commit examples, and PR template.
 
 ## Planning Docs
 - Design specs: `planning/superpowers/specs/YYYY-MM-DD-<name>-design.md`
