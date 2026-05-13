@@ -133,7 +133,7 @@ var Game = (function() {
   function layLow() {
     var s = State.get();
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
-    s.heat = Math.max(0, s.heat - 20);
+    s.heat = Math.max(0, s.heat - 10);
     s.laidLowNextTurn = true;
     endTurn();
   }
