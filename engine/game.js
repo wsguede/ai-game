@@ -57,21 +57,30 @@ var Game = (function() {
       }
 
       if (event && event.type === 'teacher') {
-        var outcome = EventEngine.resolveTeacher(s);
-        var teacherMsg = 'A teacher spots you. ';
-        if (!outcome.principalVisit) {
-          teacherMsg += 'She confiscates everything but lets you off with a warning.';
-        } else if (!outcome.heatSpike) {
-          teacherMsg += 'She confiscates everything and sends you to the principal. (' + s.principalVisits + '/3)';
+        if (!Heat.teacherCaught(s.heat)) {
+          if (s.heat > 0) {
+            s.pendingEvent = { type: 'flavor', cssClass: 'threat',
+              text: 'Mrs. Henderson eyes you carefully. She knows something\'s up — but can\'t prove it.' };
+          } else {
+            s.pendingEvent = null;
+          }
         } else {
-          teacherMsg += 'She confiscates everything, sends you to the principal, and calls your parents. (' + s.principalVisits + '/3)';
-        }
-        s.pendingEvent = Object.assign({}, event, { text: teacherMsg });
+          var outcome = EventEngine.resolveTeacher(s);
+          var teacherMsg = 'A teacher spots you. ';
+          if (!outcome.principalVisit) {
+            teacherMsg += 'She confiscates everything but lets you off with a warning.';
+          } else if (!outcome.heatSpike) {
+            teacherMsg += 'She confiscates everything and sends you to the principal. (' + s.principalVisits + '/3)';
+          } else {
+            teacherMsg += 'She confiscates everything, sends you to the principal, and calls your parents. (' + s.principalVisits + '/3)';
+          }
+          s.pendingEvent = Object.assign({}, event, { text: teacherMsg });
 
-        if (s.principalVisits >= 3) {
-          UI.render(s);
-          setTimeout(function() { UI.renderLoss(s); }, 800);
-          return;
+          if (s.principalVisits >= 3) {
+            UI.render(s);
+            setTimeout(function() { UI.renderLoss(s); }, 800);
+            return;
+          }
         }
       }
     }
