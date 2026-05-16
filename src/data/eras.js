@@ -6,7 +6,7 @@ var ERA_V1 = window.ERA_V1 = {
   events: window.EVENTS,
   maxTurns: 180,
   startingCash: 10.00,
-  stashCapacity: 30,
+  stashCapacity: 5,
   calendarEvents: {
     40:  window.HALLOWEEN_SPIKE,
     41:  window.HALLOWEEN_CRASH,
