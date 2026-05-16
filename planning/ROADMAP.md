@@ -25,6 +25,24 @@ Vite build pipeline (`npm run build` → `docs/` for GitHub Pages). Source into 
 
 ---
 
-## v2 — TBD
+## v2 — Extensions
 
-Direction to be defined in the next brainstorm session.
+Persistent in-game shop (always accessible, purchase locks trading for the day) with upgradeable item tiers across four categories. Tiers must be bought in order; prices scale up per tier. Full design: `planning/superpowers/specs/2026-05-16-v2-extensions-roadmap-design.md`.
+
+### v2.1 — Storage + Shop
+Shop infrastructure + 4 storage tiers: pocket (5) → fanny pack (10) → satchel (20) → backpack (50).
+
+### v2.2 — Tech
+3 market intelligence tiers: pen & paper (direction indicator) → calculator (+ magnitude) → excel (+ historical average).
+
+### v2.3 — Defense Passive
+4-tier run-odds upgrade vs bullies: 50% → 60% → 70% → 80% → 90%. Never reaches 100%.
+
+### v2.4 — Stealth Passive
+5-tier catch-probability reduction vs teachers: ×1.0 → ×0.5 in 10% steps. Never reaches 0%.
+
+### v2.5 — Smoke Bomb
+Defense consumable: escape any bully encounter, +15 heat. Flavor implies consequences without stating them.
+
+### v2.6 — Note from Mom
+Stealth consumable (hold max 1): dismiss a teacher catch, but each use raises the chance the principal hears about it next turn. No candy when the principal visits → no strike, but heat spikes to max(75, current).
