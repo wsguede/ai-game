@@ -117,7 +117,7 @@ describe('Shop', () => {
     Shop.purchase('storage');
     const s = State.get();
     expect(s.ownedTiers.storage).toBe(0);
-    expect(s.stashCapacity).toBe(ERA_V1.stashCapacity);
+    expect(s.stashCapacity).toBe(5);
     expect(s.shopPurchasedThisTurn).toBe(false);
     expect(s.shopWarningCount).toBe(0);
   });
