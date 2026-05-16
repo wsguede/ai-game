@@ -1,4 +1,4 @@
-var SHOP = window.SHOP = {
+window.SHOP = {
   storage: {
     category: 'storage',
     tiers: [
