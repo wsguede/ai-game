@@ -6,6 +6,7 @@ var Game = window.Game = (function() {
   var UI = window.UI;
   var ERA_V1 = window.ERA_V1;
   var Shop = window.Shop;
+  var SHOP  = window.SHOP;
   var _tradeMode  = null;  // 'buy' | 'sell'
   var _tradeCandy = null;  // candy id
   var _maxBuy     = 0;
@@ -172,6 +173,7 @@ var Game = window.Game = (function() {
 
   function openTrade(candyId) {
     var s = State.get();
+    if (s.shopPurchasedThisTurn) return;
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
     var candy = s.era.candies.find(function(c) { return c.id === candyId; });
     var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
@@ -321,7 +323,7 @@ var Game = window.Game = (function() {
     warningEl.textContent = '';
     confirmBtn.style.display = 'none';
 
-    var purchasedTier = window.SHOP[category].tiers.find(function(t) { return t.tier === s.ownedTiers[category]; });
+    var purchasedTier = SHOP[category].tiers.find(function(t) { return t.tier === s.ownedTiers[category]; });
     s.pendingNotifications.push('<strong>SHOP</strong> — Bought ' + purchasedTier.name + ' — bag upgraded to ' + purchasedTier.capacity + ' slots.');
 
     closeShop();
