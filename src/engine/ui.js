@@ -102,7 +102,7 @@ var UI = window.UI = (function() {
     return html;
   }
 
-  function renderMarket(candies, currentPrices, previousSeenPrices, stash, location, activeEffects, cash, stashCapacity) {
+  function renderMarket(candies, currentPrices, previousSeenPrices, stash, location, activeEffects, cash, stashCapacity, shopPurchasedThisTurn) {
     var stashUsed  = Object.values(stash).reduce(function(s, q) { return s + q; }, 0);
     var stashAvail = stashCapacity - stashUsed;
     var prevTier = null;
@@ -114,8 +114,8 @@ var UI = window.UI = (function() {
       var pct       = prevPrice > 0 ? Math.round((locPrice - prevPrice) / prevPrice * 100) : 0;
       var pctLabel  = (pct > 0 ? '+' : '') + pct + '% vs last seen';
       var inBag     = stash[candy.id] || 0;
-      var canBuy    = stashAvail > 0 && cash >= locPrice;
-      var canTrade  = canBuy || inBag > 0;
+      var canBuy    = !shopPurchasedThisTurn && stashAvail > 0 && cash >= locPrice;
+      var canTrade  = !shopPurchasedThisTurn && (canBuy || inBag > 0);
       var classes   = [];
       if (prevTier !== null && prevTier !== candy.risk) classes.push('tier-divider');
       if (!canTrade) classes.push('row-disabled');
@@ -144,7 +144,7 @@ var UI = window.UI = (function() {
         '<tr>' +
           '<th>🍬 CANDY</th>' +
           '<th>💰 PRICE &nbsp;<span style="color:#4cff72;font-weight:normal;letter-spacing:0">$' + cash.toFixed(2) + '</span></th>' +
-          '<th>🎒 IN BAG &nbsp;<span style="color:#aaa;font-weight:normal;letter-spacing:0">' + stashUsed + '/' + stashCapacity + '</span></th>' +
+          '<th>🎒 IN BAG &nbsp;<span style="color:#aaa;font-weight:normal;letter-spacing:0">' + stashUsed + '/' + stashCapacity + '</span>' + (shopPurchasedThisTurn ? '<span class="locked-label">TRADING LOCKED</span>' : '') + '</th>' +
         '</tr>' +
         rows +
       '</table>';
@@ -187,6 +187,7 @@ var UI = window.UI = (function() {
     } else {
       html = '<button class="action-btn" onclick="Game.layLow()">LAY LOW (−10 heat)</button>';
     }
+    html += '<button class="action-btn" onclick="Game.openShop()">🛒 SHOP</button>';
     document.getElementById('action-bar').innerHTML = html;
   }
 
@@ -219,7 +220,7 @@ var UI = window.UI = (function() {
     var location = state.era.locations.find(function(l) { return l.id === state.currentLocation; });
     renderCalendarBar(state);
     renderLocations(state.era.locations, state.currentLocation);
-    renderMarket(state.era.candies, state.currentPrices, state.previousSeenPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity);
+    renderMarket(state.era.candies, state.currentPrices, state.previousSeenPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity, state.shopPurchasedThisTurn);
     renderNotifications(state.pendingNotifications);
     renderEvent(state.pendingEvent);
     renderActions(state, state.pendingEvent);

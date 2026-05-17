@@ -124,7 +124,10 @@ describe('Data + State', () => {
     expect(s.heat).toBe(0);
     expect(s.principalVisits).toBe(0);
     expect(s.gamePhase).toBe('playing');
-    expect(s.stashCapacity).toBe(30);
+    expect(s.stashCapacity).toBe(5);
+    expect(s.ownedTiers).toEqual({ storage: 0 });
+    expect(s.shopPurchasedThisTurn).toBe(false);
+    expect(s.shopWarningCount).toBe(0);
   });
 
   it('State.init sets current prices from base prices', () => {
@@ -140,13 +143,13 @@ describe('Data + State', () => {
   it('State.addToStash and removeFromStash work correctly', () => {
     State.addToStash('smarties', 5);
     expect(State.stashTotal()).toBe(5);
-    expect(State.stashAvailable()).toBe(25);
+    expect(State.stashAvailable()).toBe(0);
     State.removeFromStash('smarties', 3);
     expect(State.stashTotal()).toBe(2);
   });
 
   it('State.addToStash throws when over capacity', () => {
-    expect(() => State.addToStash('smarties', 31)).toThrow();
+    expect(() => State.addToStash('smarties', 6)).toThrow();
   });
 
   it('State.removeFromStash throws when insufficient quantity', () => {
@@ -154,8 +157,8 @@ describe('Data + State', () => {
   });
 
   it('State.clearStash empties all candy', () => {
-    State.addToStash('smarties', 5);
-    State.addToStash('snickers', 3);
+    State.addToStash('smarties', 3);
+    State.addToStash('snickers', 2);
     State.clearStash();
     expect(State.stashTotal()).toBe(0);
   });

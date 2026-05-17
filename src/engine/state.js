@@ -35,6 +35,9 @@ var State = window.State = (function() {
       teacherSickThisTurn: false,
       teacherSickNextTurn: false,
       pendingTravelDest: null,
+      ownedTiers: { storage: 0 },
+      shopPurchasedThisTurn: false,
+      shopWarningCount: 0,
       era: era,
     };
     return _state;

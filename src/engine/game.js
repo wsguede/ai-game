@@ -5,6 +5,8 @@ var Game = window.Game = (function() {
   var EventEngine = window.EventEngine;
   var UI = window.UI;
   var ERA_V1 = window.ERA_V1;
+  var Shop = window.Shop;
+  var SHOP  = window.SHOP;
   var _tradeMode  = null;  // 'buy' | 'sell'
   var _tradeCandy = null;  // candy id
   var _maxBuy     = 0;
@@ -35,6 +37,7 @@ var Game = window.Game = (function() {
     s.teacherSickNextTurn = false;
     s.bulkDealActive = false;
     s.tradedThisTurn = false;
+    s.shopPurchasedThisTurn = false;
     s.laidLowThisTurn = s.laidLowNextTurn;
     s.laidLowNextTurn = false;
 
@@ -170,6 +173,7 @@ var Game = window.Game = (function() {
 
   function openTrade(candyId) {
     var s = State.get();
+    if (s.shopPurchasedThisTurn) return;
     if (s.pendingEvent && s.pendingEvent.type === 'bully') return;
     var candy = s.era.candies.find(function(c) { return c.id === candyId; });
     var location = s.era.locations.find(function(l) { return l.id === s.currentLocation; });
@@ -217,6 +221,7 @@ var Game = window.Game = (function() {
 
   function executeBuy(candyId, qty, price, candy) {
     var s = State.get();
+    if (s.shopPurchasedThisTurn) return;
     var maxCash = Math.floor(s.cash / price);
     var maxStash = State.stashAvailable();
     var maxBuy = Math.min(maxCash, maxStash);
@@ -239,6 +244,7 @@ var Game = window.Game = (function() {
 
   function executeSell(candyId, qty, price, candy) {
     var s = State.get();
+    if (s.shopPurchasedThisTurn) return;
     var maxSell = s.stash[candyId] || 0;
     if (qty > maxSell) { _modalError('Not enough in bag — max: ' + maxSell, maxSell); return; }
     s.cash = Math.round((s.cash + price * qty) * 100) / 100;
@@ -254,6 +260,78 @@ var Game = window.Game = (function() {
     document.getElementById('trade-modal').classList.remove('active');
     _tradeMode = null;
     _tradeCandy = null;
+  }
+
+  function openShop() {
+    var s = State.get();
+    var next = Shop.getNextTier('storage');
+    var content = document.getElementById('shop-content');
+    var confirmBtn = document.getElementById('shop-confirm');
+    var warningEl  = document.getElementById('shop-warning');
+
+    confirmBtn.style.display = 'none';
+    warningEl.textContent = '';
+
+    if (!next) {
+      content.innerHTML = '<p style="color:#666;margin-bottom:8px">Storage maxed out.</p>';
+    } else {
+      var canAfford = s.cash >= next.price;
+      content.innerHTML =
+        '<div style="margin-bottom:10px">' +
+          '<div style="display:flex;justify-content:space-between;margin-bottom:4px">' +
+            '<span style="color:#ffdd00">' + next.name + '</span>' +
+            '<span style="color:#aaa">' + next.capacity + ' slots</span>' +
+          '</div>' +
+          '<p style="color:#888;font-size:11px;margin-bottom:8px;line-height:1.5">' + next.flavor + '</p>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="color:' + (canAfford ? '#4cff72' : '#ff4444') + '">$' + next.price + '</span>' +
+            '<button class="action-btn" ' + (canAfford ? 'onclick="Game.buyTier(\'storage\')"' : 'disabled') + '>BUY</button>' +
+          '</div>' +
+        '</div>' +
+        '<p style="color:#555;font-size:10px">Currently carrying: ' + s.stashCapacity + ' slots</p>';
+    }
+
+    document.getElementById('shop-modal').classList.add('active');
+  }
+
+  function buyTier(category) {
+    var s = State.get();
+    var warningEl  = document.getElementById('shop-warning');
+    var confirmBtn = document.getElementById('shop-confirm');
+
+    if (s.shopWarningCount < 2) {
+      warningEl.textContent = 'Heads up: buying from the shop locks candy trading for the rest of today. You\'ll still need to end the turn yourself.';
+      confirmBtn.style.display = '';
+      confirmBtn.onclick = function() { _confirmBuyTier(category); };
+      return;
+    }
+
+    _confirmBuyTier(category);
+  }
+
+  function _confirmBuyTier(category) {
+    var s = State.get();
+    var warningEl  = document.getElementById('shop-warning');
+    var confirmBtn = document.getElementById('shop-confirm');
+
+    var success = Shop.purchase(category);
+    if (!success) {
+      warningEl.textContent = 'Not enough cash.';
+      return;
+    }
+
+    warningEl.textContent = '';
+    confirmBtn.style.display = 'none';
+
+    var purchasedTier = SHOP[category].tiers.find(function(t) { return t.tier === s.ownedTiers[category]; });
+    s.pendingNotifications.push('<strong>SHOP</strong> — Bought ' + purchasedTier.name + ' — bag upgraded to ' + purchasedTier.capacity + ' slots.');
+
+    closeShop();
+    UI.render(s);
+  }
+
+  function closeShop() {
+    document.getElementById('shop-modal').classList.remove('active');
   }
 
   function payBully() {
@@ -292,7 +370,7 @@ var Game = window.Game = (function() {
     startTurn();
   }
 
-  return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, setTradeMode: setTradeMode, fillMax: fillMax, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob, closeIntro: closeIntro };
+  return { init: init, endTurn: endTurn, travel: travel, layLow: layLow, openTrade: openTrade, setTradeMode: setTradeMode, fillMax: fillMax, payBully: payBully, runFromBully: runFromBully, acceptRob: acceptRob, closeIntro: closeIntro, openShop: openShop, buyTier: buyTier, closeShop: closeShop };
 })();
 
 
