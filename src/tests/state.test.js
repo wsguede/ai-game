@@ -125,9 +125,17 @@ describe('Data + State', () => {
     expect(s.principalVisits).toBe(0);
     expect(s.gamePhase).toBe('playing');
     expect(s.stashCapacity).toBe(5);
-    expect(s.ownedTiers).toEqual({ storage: 0 });
+    expect(s.ownedTiers).toEqual({ storage: 0, tech: 0 });
     expect(s.shopPurchasedThisTurn).toBe(false);
     expect(s.shopWarningCount).toBe(0);
+  });
+
+  it('State.init sets ownedTiers.tech to 0', () => {
+    expect(State.get().ownedTiers.tech).toBe(0);
+  });
+
+  it('State.init sets priceHistory to empty object', () => {
+    expect(State.get().priceHistory).toEqual({});
   });
 
   it('State.init sets current prices from base prices', () => {
