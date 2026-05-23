@@ -74,6 +74,42 @@ var UI = window.UI = (function() {
     document.getElementById('location-section').innerHTML = html;
   }
 
+  function _renderIntelTooltip(tooltip) {
+    var html = '<div class="intel-tip">';
+    html += '<div class="tip-row"><span class="tip-label">avg price</span><span>$' + tooltip.avg.toFixed(2) + '</span></div>';
+    if (tooltip.low !== undefined) {
+      var sign    = tooltip.vsAvgPct >= 0 ? '+' : '';
+      var vsClass = tooltip.vsAvgPct > 0 ? 'tip-vs-high' : tooltip.vsAvgPct < 0 ? 'tip-vs-low' : '';
+      html += '<div class="tip-row"><span class="tip-label">seen low</span><span>$' + tooltip.low.toFixed(2) + '</span></div>';
+      html += '<div class="tip-row"><span class="tip-label">seen high</span><span>$' + tooltip.high.toFixed(2) + '</span></div>';
+      html += '<div class="tip-divider"></div>';
+      html += '<div class="tip-row"><span class="tip-label">vs avg</span><span class="' + vsClass + '">' + sign + tooltip.vsAvgPct + '%</span></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function _renderPriceCell(locPrice, intel, pct) {
+    var priceStr = '$' + locPrice.toFixed(2);
+    if (!intel.arrowClass) return priceStr;
+
+    var arrow    = TREND_SYMBOLS[intel.arrowClass];
+    var pctLabel = (pct > 0 ? '+' : '') + pct + '% vs last seen';
+
+    if (intel.tooltip) {
+      var hlTag = intel.hlLabel
+        ? ' <span class="hl-' + intel.hlLabel.toLowerCase() + '">' + intel.hlLabel + '</span>'
+        : '';
+      return '<span class="price-wrap">' +
+        priceStr + ' <span class="trend-' + intel.arrowClass + '">' + arrow + '</span>' + hlTag +
+        _renderIntelTooltip(intel.tooltip) +
+        '</span>';
+    }
+
+    return priceStr + ' <span class="trend-wrap"><span class="trend-' + intel.arrowClass + '">' + arrow + '</span>' +
+      '<div class="trend-tip">' + pctLabel + '</div></span>';
+  }
+
   function _renderDebugTooltip(candy, marketPrice, locPrice, location, activeEffects, previousSeenPrices) {
     var steps    = Market.getPriceBreakdown(candy, marketPrice, location, activeEffects);
     var lastSeen = previousSeenPrices[candy.id] || candy.basePrice;
@@ -102,7 +138,7 @@ var UI = window.UI = (function() {
     return html;
   }
 
-  function renderMarket(candies, currentPrices, previousSeenPrices, stash, location, activeEffects, cash, stashCapacity, shopPurchasedThisTurn) {
+  function renderMarket(candies, currentPrices, previousSeenPrices, stash, location, activeEffects, cash, stashCapacity, shopPurchasedThisTurn, techTier, priceHistory) {
     var stashUsed  = Object.values(stash).reduce(function(s, q) { return s + q; }, 0);
     var stashAvail = stashCapacity - stashUsed;
     var prevTier = null;
@@ -110,9 +146,8 @@ var UI = window.UI = (function() {
       var basePrice = currentPrices[candy.id];
       var locPrice  = Market.getLocationPrice(basePrice, candy, location, activeEffects);
       var prevPrice = previousSeenPrices[candy.id] || basePrice;
-      var trend     = Market.getPriceTrend(prevPrice, locPrice);
-      var pct       = prevPrice > 0 ? Math.round((locPrice - prevPrice) / prevPrice * 100) : 0;
-      var pctLabel  = (pct > 0 ? '+' : '') + pct + '% vs last seen';
+      var intel = Market.getTechIntel(candy, basePrice, prevPrice, locPrice, techTier, priceHistory);
+      var pct   = prevPrice > 0 ? Math.round((locPrice - prevPrice) / prevPrice * 100) : 0;
       var inBag     = stash[candy.id] || 0;
       var canBuy    = !shopPurchasedThisTurn && stashAvail > 0 && cash >= locPrice;
       var canTrade  = !shopPurchasedThisTurn && (canBuy || inBag > 0);
@@ -132,7 +167,7 @@ var UI = window.UI = (function() {
             '<div class="ct-row"><span class="ct-label">Heat/unit</span><span>+' + candy.heatPerUnit + '</span></div>' +
           '</div>' +
         '</td>' +
-        '<td class="price-cell">$' + locPrice.toFixed(2) + ' <span class="trend-wrap"><span class="trend-' + trend + '">' + TREND_SYMBOLS[trend] + '</span><div class="trend-tip">' + pctLabel + '</div></span>' +
+        '<td class="price-cell">' + _renderPriceCell(locPrice, intel, pct) +
         (DEBUG ? _renderDebugTooltip(candy, basePrice, locPrice, location, activeEffects, previousSeenPrices) : '') +
         '</td>' +
         '<td>' + inBag + '</td>' +
@@ -220,7 +255,7 @@ var UI = window.UI = (function() {
     var location = state.era.locations.find(function(l) { return l.id === state.currentLocation; });
     renderCalendarBar(state);
     renderLocations(state.era.locations, state.currentLocation);
-    renderMarket(state.era.candies, state.currentPrices, state.previousSeenPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity, state.shopPurchasedThisTurn);
+    renderMarket(state.era.candies, state.currentPrices, state.previousSeenPrices, state.stash, location, state.activeEffects, state.cash, state.stashCapacity, state.shopPurchasedThisTurn, state.ownedTiers.tech, state.priceHistory);
     renderNotifications(state.pendingNotifications);
     renderEvent(state.pendingEvent);
     renderActions(state, state.pendingEvent);

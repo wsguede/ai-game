@@ -27,6 +27,12 @@ var Game = window.Game = (function() {
     var newPrices = Market.updatePrices(s.currentPrices, s.era.candies, s.activeEffects);
     s.currentPrices = newPrices;
 
+    // Record price history
+    s.era.candies.forEach(function(c) {
+      if (!s.priceHistory[c.id]) s.priceHistory[c.id] = [];
+      s.priceHistory[c.id].push(s.currentPrices[c.id]);
+    });
+
     // Decay active effects
     s.activeEffects = s.activeEffects
       .map(function(e) { return Object.assign({}, e, { turnsLeft: e.turnsLeft - 1 }); })
@@ -264,33 +270,45 @@ var Game = window.Game = (function() {
 
   function openShop() {
     var s = State.get();
-    var next = Shop.getNextTier('storage');
-    var content = document.getElementById('shop-content');
     var confirmBtn = document.getElementById('shop-confirm');
     var warningEl  = document.getElementById('shop-warning');
 
     confirmBtn.style.display = 'none';
     warningEl.textContent = '';
 
-    if (!next) {
-      content.innerHTML = '<p style="color:#666;margin-bottom:8px">Storage maxed out.</p>';
-    } else {
-      var canAfford = s.cash >= next.price;
-      content.innerHTML =
-        '<div style="margin-bottom:10px">' +
-          '<div style="display:flex;justify-content:space-between;margin-bottom:4px">' +
-            '<span style="color:#ffdd00">' + next.name + '</span>' +
-            '<span style="color:#aaa">' + next.capacity + ' slots</span>' +
-          '</div>' +
-          '<p style="color:#888;font-size:11px;margin-bottom:8px;line-height:1.5">' + next.flavor + '</p>' +
-          '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<span style="color:' + (canAfford ? '#4cff72' : '#ff4444') + '">$' + next.price + '</span>' +
-            '<button class="action-btn" ' + (canAfford ? 'onclick="Game.buyTier(\'storage\')"' : 'disabled') + '>BUY</button>' +
-          '</div>' +
-        '</div>' +
-        '<p style="color:#555;font-size:10px">Currently carrying: ' + s.stashCapacity + ' slots</p>';
-    }
+    var categoryLabels = { storage: '📦 STORAGE', tech: '📊 TECH' };
+    var html = '';
 
+    ['storage', 'tech'].forEach(function(category) {
+      var next = Shop.getNextTier(category);
+      html += '<div class="shop-category">';
+      html += '<div class="shop-category-label">' + categoryLabels[category] + '</div>';
+
+      if (!next) {
+        html += '<p style="color:#666;font-size:11px;margin-bottom:4px">Maxed out.</p>';
+      } else {
+        var canAfford = s.cash >= next.price;
+        var detail = next.capacity != null
+          ? '<span style="color:#aaa">' + next.capacity + ' slots</span>'
+          : '';
+        html +=
+          '<div style="margin-bottom:4px">' +
+            '<div style="display:flex;justify-content:space-between;margin-bottom:4px">' +
+              '<span style="color:#ffdd00">' + next.name + '</span>' + detail +
+            '</div>' +
+            '<p style="color:#888;font-size:11px;margin-bottom:8px;line-height:1.5">' + next.flavor + '</p>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+              '<span style="color:' + (canAfford ? '#4cff72' : '#ff4444') + '">$' + next.price + '</span>' +
+              '<button class="action-btn" ' +
+                (canAfford ? 'onclick="Game.buyTier(\'' + category + '\')"' : 'disabled') +
+              '>BUY</button>' +
+            '</div>' +
+          '</div>';
+      }
+      html += '</div>';
+    });
+
+    document.getElementById('shop-content').innerHTML = html;
     document.getElementById('shop-modal').classList.add('active');
   }
 
@@ -324,7 +342,7 @@ var Game = window.Game = (function() {
     confirmBtn.style.display = 'none';
 
     var purchasedTier = SHOP[category].tiers.find(function(t) { return t.tier === s.ownedTiers[category]; });
-    s.pendingNotifications.push('<strong>SHOP</strong> — Bought ' + purchasedTier.name + ' — bag upgraded to ' + purchasedTier.capacity + ' slots.');
+    s.pendingNotifications.push('<strong>SHOP</strong> — Bought ' + purchasedTier.name + '.');
 
     closeShop();
     UI.render(s);

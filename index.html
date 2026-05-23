@@ -118,6 +118,22 @@
     .threat-stat:hover .threat-tip { display: block; }
     .threat-tip { display: none; position: absolute; top: 140%; right: 0; background: #1a1a1a; border: 1px solid #555; padding: 8px 12px; width: 200px; z-index: 10; font-size: 11px; line-height: 1.6; color: #ccc; pointer-events: none; white-space: normal; }
     .locked-label { color: #ff4444; font-size: 9px; letter-spacing: 1px; opacity: 0.6; margin-left: 6px; }
+    /* Tech intel tier indicators */
+    .hl-high { color: #ff7043; font-size: 10px; font-weight: bold; padding: 1px 4px; border: 1px solid rgba(255,112,67,0.35); border-radius: 3px; margin-left: 5px; vertical-align: middle; }
+    .hl-mid  { color: #888;    font-size: 10px;                    padding: 1px 4px; border: 1px solid rgba(120,120,120,0.4);  border-radius: 3px; margin-left: 5px; vertical-align: middle; }
+    .hl-low  { color: #66bb6a; font-size: 10px; font-weight: bold; padding: 1px 4px; border: 1px solid rgba(102,187,106,0.35); border-radius: 3px; margin-left: 5px; vertical-align: middle; }
+    .price-wrap { position: relative; display: inline-block; cursor: default; }
+    .price-wrap:hover .intel-tip { display: block; }
+    .intel-tip { display: none; position: absolute; bottom: calc(100% + 6px); left: 0; background: #1a1a2e; border: 1px solid #333; border-radius: 5px; padding: 8px 12px; font-size: 11px; color: #ccc; white-space: nowrap; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.5); pointer-events: none; }
+    .tip-row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 3px; }
+    .tip-label { color: #666; }
+    .tip-vs-high { color: #ff7043; }
+    .tip-vs-low  { color: #66bb6a; }
+    .tip-divider { border-top: 1px solid #2a2a3e; margin: 5px 0; }
+    /* Shop category sections */
+    .shop-category { margin-bottom: 12px; }
+    .shop-category + .shop-category { border-top: 1px solid #222; padding-top: 12px; }
+    .shop-category-label { font-size: 10px; letter-spacing: 1px; color: #666; margin-bottom: 8px; }
   </style>
 </head>
 <body>

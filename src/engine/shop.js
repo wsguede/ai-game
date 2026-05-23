@@ -20,8 +20,8 @@ var Shop = window.Shop = (function() {
     var next = getNextTier(category);
     if (!next || s.cash < next.price) return false;
     s.cash                  = Math.round((s.cash - next.price) * 100) / 100;
-    s.ownedTiers[category]  = next.tier;
-    s.stashCapacity         = next.capacity;
+    s.ownedTiers[category] = next.tier;
+    if (next.capacity != null) s.stashCapacity = next.capacity;
     s.shopPurchasedThisTurn = true;
     s.shopWarningCount++;
     return true;
