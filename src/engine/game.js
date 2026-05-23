@@ -27,6 +27,12 @@ var Game = window.Game = (function() {
     var newPrices = Market.updatePrices(s.currentPrices, s.era.candies, s.activeEffects);
     s.currentPrices = newPrices;
 
+    // Record price history
+    s.era.candies.forEach(function(c) {
+      if (!s.priceHistory[c.id]) s.priceHistory[c.id] = [];
+      s.priceHistory[c.id].push(s.currentPrices[c.id]);
+    });
+
     // Decay active effects
     s.activeEffects = s.activeEffects
       .map(function(e) { return Object.assign({}, e, { turnsLeft: e.turnsLeft - 1 }); })
