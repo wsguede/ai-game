@@ -125,3 +125,115 @@ describe('Market', () => {
     expect(steps[2].delta).toBeGreaterThan(0);
   });
 });
+
+describe('Market.getTechIntel', () => {
+  let Market, candy;
+
+  beforeAll(() => {
+    Market = window.Market;
+    candy = window.ERA_V1.candies.find(c => c.id === 'smarties');
+  });
+
+  it('T0: returns all nulls', () => {
+    const result = Market.getTechIntel(candy, 0.25, 0.25, 0.25, 0, {});
+    expect(result).toEqual({ arrowClass: null, hlLabel: null, tooltip: null });
+  });
+
+  it('T1: up move returns arrowClass up, no hlLabel or tooltip', () => {
+    const result = Market.getTechIntel(candy, 0.25, 0.20, 0.25, 1, {});
+    expect(result.arrowClass).toBe('up');
+    expect(result.hlLabel).toBeNull();
+    expect(result.tooltip).toBeNull();
+  });
+
+  it('T1: big up move (>5%) still returns arrowClass up, not upup', () => {
+    const result = Market.getTechIntel(candy, 0.35, 0.20, 0.35, 1, {});
+    expect(result.arrowClass).toBe('up');
+  });
+
+  it('T1: down move returns arrowClass down', () => {
+    const result = Market.getTechIntel(candy, 0.20, 0.25, 0.20, 1, {});
+    expect(result.arrowClass).toBe('down');
+  });
+
+  it('T1: equal prices returns arrowClass flat', () => {
+    const result = Market.getTechIntel(candy, 0.25, 0.25, 0.25, 1, {});
+    expect(result.arrowClass).toBe('flat');
+  });
+
+  it('T2: small up move (<=5%) returns arrowClass up', () => {
+    // locPrice 0.262 vs prevSeenPrice 0.25 → pct ≈ 4.8%
+    const result = Market.getTechIntel(candy, 0.262, 0.25, 0.262, 2, {});
+    expect(result.arrowClass).toBe('up');
+  });
+
+  it('T2: big up move (>5%) returns arrowClass upup', () => {
+    // locPrice 0.27 vs prevSeenPrice 0.25 → pct = 8%
+    const result = Market.getTechIntel(candy, 0.27, 0.25, 0.27, 2, {});
+    expect(result.arrowClass).toBe('upup');
+  });
+
+  it('T2: big down move (>5%) returns arrowClass downdown', () => {
+    // locPrice 0.23 vs prevSeenPrice 0.25 → pct = -8%
+    const result = Market.getTechIntel(candy, 0.23, 0.25, 0.23, 2, {});
+    expect(result.arrowClass).toBe('downdown');
+  });
+
+  it('T2: small down move (<=5%) returns arrowClass down', () => {
+    // locPrice 0.238 vs prevSeenPrice 0.25 → pct ≈ -4.8%
+    const result = Market.getTechIntel(candy, 0.238, 0.25, 0.238, 2, {});
+    expect(result.arrowClass).toBe('down');
+  });
+
+  it('T3: history fewer than 3 entries → hlLabel null, tooltip null', () => {
+    const history = { smarties: [0.20, 0.22] };
+    const result = Market.getTechIntel(candy, 0.25, 0.24, 0.25, 3, history);
+    expect(result.arrowClass).toBe('up');
+    expect(result.hlLabel).toBeNull();
+    expect(result.tooltip).toBeNull();
+  });
+
+  it('T3: LOW when basePrice in bottom third of range', () => {
+    // history range [0.20, 0.30], third = 0.0333, LOW boundary = 0.2333
+    const history = { smarties: [0.20, 0.25, 0.30] };
+    const result = Market.getTechIntel(candy, 0.21, 0.20, 0.21, 3, history);
+    expect(result.hlLabel).toBe('LOW');
+  });
+
+  it('T3: HIGH when basePrice in top third of range', () => {
+    // HIGH boundary = 0.2667, basePrice 0.29 → HIGH
+    const history = { smarties: [0.20, 0.25, 0.30] };
+    const result = Market.getTechIntel(candy, 0.29, 0.28, 0.29, 3, history);
+    expect(result.hlLabel).toBe('HIGH');
+  });
+
+  it('T3: MID when basePrice in middle third of range', () => {
+    const history = { smarties: [0.20, 0.25, 0.30] };
+    const result = Market.getTechIntel(candy, 0.25, 0.24, 0.25, 3, history);
+    expect(result.hlLabel).toBe('MID');
+  });
+
+  it('T3: tooltip contains only avg', () => {
+    // avg = (0.20 + 0.25 + 0.30) / 3 = 0.25
+    const history = { smarties: [0.20, 0.25, 0.30] };
+    const result = Market.getTechIntel(candy, 0.25, 0.24, 0.25, 3, history);
+    expect(result.tooltip).toEqual({ avg: 0.25 });
+  });
+
+  it('T4: tooltip contains avg, low, high, and vsAvgPct', () => {
+    // avg = 0.25, vsAvgPct for basePrice 0.30 = +20%
+    const history = { smarties: [0.20, 0.25, 0.30] };
+    const result = Market.getTechIntel(candy, 0.30, 0.28, 0.30, 4, history);
+    expect(result.tooltip.avg).toBe(0.25);
+    expect(result.tooltip.low).toBe(0.20);
+    expect(result.tooltip.high).toBe(0.30);
+    expect(result.tooltip.vsAvgPct).toBe(20);
+  });
+
+  it('T4: hlLabel and arrowClass still present alongside full tooltip', () => {
+    const history = { smarties: [0.20, 0.25, 0.30] };
+    const result = Market.getTechIntel(candy, 0.30, 0.25, 0.30, 4, history);
+    expect(result.hlLabel).toBe('HIGH');
+    expect(result.arrowClass).toBe('upup');
+  });
+});
